@@ -72,7 +72,6 @@ let
     src = cleanSrc oldAttrs.src;
   }));
 
-
 in
 {
   lib = (super.lib or {}) // {

@@ -2,7 +2,7 @@
 
 { stdenv
 , pkgs
-, src ? ../test-dir
+, src
 }:
 
 let

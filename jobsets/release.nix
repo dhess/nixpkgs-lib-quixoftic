@@ -55,11 +55,20 @@ let
       ];
     };
 
+
+    ## Note that these jobs should evaluate to the same values as their
+    ## namesakes in cleanSources.
+
     cleanPackages = pkgs.releaseTools.aggregate {
       name = "nixpkgs-lib-quixoftic-cleanPackages";
       meta.description = "nixpkgs-lib-quixoftic cleanPackage tests";
       constituents = with jobs; [
-        # None yet.
+        nlqCleanPackageNix.x86_64-linux
+        nlqCleanPackageHaskell.x86_64-linux
+        nlqCleanPackageSystemCruft.x86_64-linux
+        nlqCleanPackageEditors.x86_64-linux
+        nlqCleanPackageMaintainer.x86_64-linux
+        nlqCleanPackageAllExtraneous.x86_64-linux
       ];
     };
 
