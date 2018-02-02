@@ -93,39 +93,31 @@ in
     # when a nix-build command is executed, so if *what they evaluate*
     # changes they'll cause a rebuild anyway, as they should; while
     # cosmetic changes (comments, formatting, etc.) won't.
-
     inherit cleanSourceNix;
 
     # Clean Haskell projects.
-
     inherit cleanSourceHaskell;
 
     # Clean system cruft, e.g., .DS_Store files on macOS filesystems.    
-
     inherit cleanSourceSystemCruft;
 
     # Clean files related to editors and IDEs.
-
     inherit cleanSourceEditors;
 
     # Clean maintainer files that don't affect Nix builds.
-
     inherit cleanSourceMaintainer;
 
     # A cleaner that combines all of the cleaners defined here, plus
     # `lib.cleanSource` from Nixpkgs.
-
     inherit cleanSourceAllExtraneous;
 
-
-    ## Clean the `src` attribute of a package. This is convenient when
-    ## you use tools like `cabal2nix` to generate Nix files for local
-    ## source repos, as these tools generally lack the ability to
-    ## apply the various `clean*Source` functions to the `src`
-    ## attribute that they generate. Instead, you can apply this
-    ## function, plus one or more source cleaners, to a pacakge that
-    ## is the result of a `callPackage` function application.
-
+    # Clean the `src` attribute of a package. This is convenient when
+    # you use tools like `cabal2nix` to generate Nix files for local
+    # source repos, as these tools generally lack the ability to
+    # apply the various `clean*Source` functions to the `src`
+    # attribute that they generate. Instead, you can apply this
+    # function, plus one or more source cleaners, to a package that
+    # is the result of a `callPackage` function application.
     inherit cleanPackage;
   };
 }
