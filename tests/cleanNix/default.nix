@@ -1,0 +1,30 @@
+## checkPhase will fail unless you cleanSourceNix.
+
+{ stdenv
+, pkgs
+, src ? ../test-dir
+}:
+
+let
+
+  version = "1";
+  testLib = import ../lib.nix;
+
+in
+
+stdenv.mkDerivation rec {
+  inherit src;
+
+  name = "nlq-cleanNix-test-${version}";
+
+  doCheck = true;
+  checkPhase = ''
+    ${testLib.test-dir "." "nix"}
+    ${testLib.test-no-file "." "*.nix"}
+  '';
+
+  installPhase = ''
+    mkdir $out
+    cp -rp . $out
+  '';
+}

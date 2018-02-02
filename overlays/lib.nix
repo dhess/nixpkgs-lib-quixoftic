@@ -33,16 +33,16 @@ let
 
   filterEditors = name: type: let baseName = baseNameOf (toString name); in ! (
     type != "directory" && (
-      baseName == ".dir-locals.el"                        ||
-      baseName == ".netrwhist"                            ||
-      baseName == ".projectile"                           ||
-      baseName == ".tags"                                 ||
-      baseName == ".vim.custom"                           ||
-      baseName == ".vscodeignore"                         ||
-      builtins.match "^#.*#" baseName != null             ||
-      builtins.match "^\\.#.*" baseName != null           ||
-      builtins.match "^.*_flymake\\..*" baseName != null  ||
-      builtins.match "^flycheck_.*\\.el" baseName != null
+      baseName == ".dir-locals.el"                         ||
+      baseName == ".netrwhist"                             ||
+      baseName == ".projectile"                            ||
+      baseName == ".tags"                                  ||
+      baseName == ".vim.custom"                            ||
+      baseName == ".vscodeignore"                          ||
+      builtins.match "^#.*#$" baseName != null             ||
+      builtins.match "^\\.#.*$" baseName != null           ||
+      builtins.match "^.*_flymake\\..*$" baseName != null  ||
+      builtins.match "^flycheck_.*\\.el$" baseName != null
     )
   );
   cleanSourceEditors = src: super.lib.cleanSourceWith { filter = filterEditors; inherit src; };
@@ -60,7 +60,7 @@ let
   );
   cleanSourceMaintainer = src: super.lib.cleanSourceWith { filter = filterMaintainer; inherit src; };
 
-  cleanSourceAll = src:
+  cleanSourceAllExtraneous = src:
     cleanSourceMaintainer
       (cleanSourceEditors
         (cleanSourceSystemCruft
@@ -116,7 +116,7 @@ in
     # A cleaner that combines all of the cleaners defined here, plus
     # `lib.cleanSource` from Nixpkgs.
 
-    inherit cleanSourceAll;
+    inherit cleanSourceAllExtraneous;
 
 
     ## Clean the `src` attribute of a package. This is convenient when

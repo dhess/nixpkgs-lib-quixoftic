@@ -44,9 +44,22 @@ let
 
     cleanSources = pkgs.releaseTools.aggregate {
       name = "nixpkgs-lib-quixoftic-cleanSources";
-      meta.description = "nixpkgs-lib-quixoftic cleanSources tests";
+      meta.description = "nixpkgs-lib-quixoftic cleanSource tests";
       constituents = with jobs; [
-        cleanSourceNix.x86_64-linux
+        nlqCleanSourceNix.x86_64-linux
+        nlqCleanSourceHaskell.x86_64-linux
+        nlqCleanSourceSystemCruft.x86_64-linux
+        nlqCleanSourceEditors.x86_64-linux
+        nlqCleanSourceMaintainer.x86_64-linux
+        nlqCleanSourceAllExtraneous.x86_64-linux
+      ];
+    };
+
+    cleanPackages = pkgs.releaseTools.aggregate {
+      name = "nixpkgs-lib-quixoftic-cleanPackages";
+      meta.description = "nixpkgs-lib-quixoftic cleanPackage tests";
+      constituents = with jobs; [
+        # None yet.
       ];
     };
 
@@ -56,5 +69,7 @@ let
 in
 {
   inherit (jobs) cleanSources;
+  inherit (jobs) cleanPackages;
 }
 // enumerateConstituents jobs.cleanSources
+// enumerateConstituents jobs.cleanPackages
