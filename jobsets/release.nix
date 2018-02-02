@@ -73,12 +73,18 @@ let
     };
 
   }
-  // (mapTestOn (packagePlatforms pkgs));
+  // (mapTestOn ((packagePlatforms pkgs) // rec {
+
+    # This doesn't generate any actual jobs, we just want to make sure
+    # it evaluates properly.
+    haskell = packagePlatforms pkgs.haskell;
+  }));
 
 in
 {
   inherit (jobs) cleanSources;
   inherit (jobs) cleanPackages;
+  inherit (jobs) haskell;
 }
 // enumerateConstituents jobs.cleanSources
 // enumerateConstituents jobs.cleanPackages
