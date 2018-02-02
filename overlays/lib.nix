@@ -19,16 +19,16 @@ let
   # when a nix-build command is executed, so if *what they evaluate*
   # changes they'll cause a rebuild anyway, as they should; while
   # cosmetic changes (comments, formatting, etc.) won't.
-  filterNix = name: type: let baseName = baseNameOf (toString name); in ! (
+  cleanSourceFilterNix = name: type: let baseName = baseNameOf (toString name); in ! (
     type != "directory" && (
       super.lib.hasSuffix ".nix" baseName
     )
   );
-  cleanSourceNix = src: super.lib.cleanSourceWith { filter = filterNix; inherit src; };
+  cleanSourceNix = src: super.lib.cleanSourceWith { filter = cleanSourceFilterNix; inherit src; };
 
 
   # Clean Haskell projects.
-  filterHaskell = name: type: let baseName = baseNameOf (toString name); in ! (
+  cleanSourceFilterHaskell = name: type: let baseName = baseNameOf (toString name); in ! (
     type == "directory" && (
       baseName == ".cabal-sandbox" ||
       baseName == ".stack-work"    ||
@@ -41,20 +41,20 @@ let
       baseName == "cabal.sandbox.config"
     )
   );
-  cleanSourceHaskell = src: super.lib.cleanSourceWith { filter = filterHaskell; inherit src; };
+  cleanSourceHaskell = src: super.lib.cleanSourceWith { filter = cleanSourceFilterHaskell; inherit src; };
 
 
   # Clean system cruft, e.g., .DS_Store files on macOS filesystems.    
-  filterSystemCruft = name: type: let baseName = baseNameOf (toString name); in ! (
+  cleanSourceFilterSystemCruft = name: type: let baseName = baseNameOf (toString name); in ! (
     type != "directory" && (
       baseName == ".DS_Store"
     )
   );
-  cleanSourceSystemCruft = src: super.lib.cleanSourceWith { filter = filterSystemCruft; inherit src; };
+  cleanSourceSystemCruft = src: super.lib.cleanSourceWith { filter = cleanSourceFilterSystemCruft; inherit src; };
 
 
   # Clean files related to editors and IDEs.
-  filterEditors = name: type: let baseName = baseNameOf (toString name); in ! (
+  cleanSourceFilterEditors = name: type: let baseName = baseNameOf (toString name); in ! (
     type != "directory" && (
       baseName == ".dir-locals.el"                         ||
       baseName == ".netrwhist"                             ||
@@ -68,11 +68,11 @@ let
       builtins.match "^flycheck_.*\\.el$" baseName != null
     )
   );
-  cleanSourceEditors = src: super.lib.cleanSourceWith { filter = filterEditors; inherit src; };
+  cleanSourceEditors = src: super.lib.cleanSourceWith { filter = cleanSourceFilterEditors; inherit src; };
 
 
   # Clean maintainer files that don't affect Nix builds.
-  filterMaintainer = name: type: let baseName = baseNameOf (toString name); in ! (
+  cleanSourceFilterMaintainer = name: type: let baseName = baseNameOf (toString name); in ! (
     type != "directory" && (
       # Note: .git can be a file when it's in a submodule directory
       baseName == ".git"           ||
@@ -83,7 +83,7 @@ let
       baseName == ".travis.yml"
     )
   );
-  cleanSourceMaintainer = src: super.lib.cleanSourceWith { filter = filterMaintainer; inherit src; };
+  cleanSourceMaintainer = src: super.lib.cleanSourceWith { filter = cleanSourceFilterMaintainer; inherit src; };
 
 
   # A cleaner that combines all of the cleaners defined here, plus
@@ -111,6 +111,15 @@ let
 in
 {
   lib = (super.lib or {}) // {
+
+    # Filters.
+    inherit cleanSourceFilterNix;
+    inherit cleanSourceFilterHaskell;
+    inherit cleanSourceFilterSystemCruft;
+    inherit cleanSourceFilterEditors;
+    inherit cleanSourceFilterMaintainer;
+
+    # cleanSource's.
     inherit cleanSourceNix;
     inherit cleanSourceHaskell;
     inherit cleanSourceSystemCruft;
