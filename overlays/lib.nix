@@ -38,7 +38,9 @@ let
     type != "directory" && (
       baseName == ".ghci"                 ||
       baseName == ".stylish-haskell.yaml" ||
-      baseName == "cabal.sandbox.config"
+      baseName == "cabal.sandbox.config"  ||
+      baseName == "cabal.project"         ||
+      baseName == "sources.txt"
     )
   );
   cleanSourceHaskell = src: super.lib.cleanSourceWith { filter = cleanSourceFilterHaskell; inherit src; };

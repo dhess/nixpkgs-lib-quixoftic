@@ -26,6 +26,8 @@ stdenv.mkDerivation rec {
     ${testLib.test-no-file "." ".ghci"}
     ${testLib.test-no-file "." ".stylish-haskell.yaml"}
     ${testLib.test-no-file "." "cabal.sandbox.config"}
+    ${testLib.test-no-file "." "cabal.project"}
+    ${testLib.test-no-file "." "sources.txt"}
   '';
 
   installPhase = ''
