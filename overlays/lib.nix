@@ -4,7 +4,11 @@ let
 
   callLibs = file: import file { lib = super.lib; };
 
+
+  ## New types for NixOS modules.
+
   localTypes = callLibs ./lib/types.nix;
+
 
   ## Functions for cleaning local source directories. These are useful
   ## for filtering out files in your local repo that should not
@@ -136,6 +140,12 @@ let
         aggregate.constituents
   );
 
+
+  ## Provide access to the whole package, if needed.
+
+  nixpkgs-lib-quixoftic-path = ../.;
+
+
 in
 {
   lib = (super.lib or {}) // {
@@ -161,8 +171,9 @@ in
       inherit enumerateConstituents;
     };
 
-    nixpkgs-lib-quixoftic-path = ../.;
+    inherit nixpkgs-lib-quixoftic-path;
 
     types = (super.lib.types or {}) // localTypes;
+
   };
 }
