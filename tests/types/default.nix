@@ -10,7 +10,7 @@ let
 in
 
 stdenv.mkDerivation {
-  name = "nlq-types-strings-test-${version}";
+  name = "nlq-types-test-${version}";
   buildInputs = [ pkgs.nix ];
   NIX_PATH="nixpkgs=${pkgs.path}:nixpkgs-overlays=${pkgs.lib.nixpkgs-lib-quixoftic-path}/overlays/";
 

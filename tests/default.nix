@@ -34,7 +34,7 @@ in
 
   ## Types tests.
 
-  nlqStringTypes = callPackage ./types {};
+  nlqTypes = callPackage ./types {};
 
 
   ## Security tests.

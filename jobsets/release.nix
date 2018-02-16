@@ -56,9 +56,9 @@ let
 
     types = pkgs.releaseTools.aggregate {
       name = "nixpkgs-lib-quixoftic-types";
-      meta.description = "nixpkgs-lib-quixoftic-types types tests";
+      meta.description = "nixpkgs-lib-quixoftic types tests";
       constituents = with jobs; [
-        nlqStringTypes.x86_64-linux
+        nlqTypes.x86_64-linux
       ];
     };
 
