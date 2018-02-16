@@ -1,3 +1,7 @@
+## An overlay which, when loaded, defines some self-testing packages.
+## All you need to do is build these packages, and the tests will run
+## in each package's checkPhase.
+
 self: super:
 
 let
@@ -27,4 +31,8 @@ in
   nlqCleanPackageMaintainer = lib.cleanPackage lib.cleanSourceMaintainer (callPackage ./cleanMaintainer { src = ./test-dir;});
   nlqCleanPackageAllExtraneous = lib.cleanPackage lib.cleanSourceAllExtraneous (callPackage ./cleanAllExtraneous { src = ./test-dir;});
 
+
+  ## Types tests.
+
+  nlqStringTypes = callPackage ./types {};
 }

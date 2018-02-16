@@ -53,6 +53,15 @@ let
       ];
     };
 
+
+    types = pkgs.releaseTools.aggregate {
+      name = "nixpkgs-lib-quixoftic-types";
+      meta.description = "nixpkgs-lib-quixoftic-types types tests";
+      constituents = with jobs; [
+        nlqStringTypes.x86_64-linux
+      ];
+    };
+
   }
   // (mapTestOn ((packagePlatforms pkgs) // rec {
 
@@ -65,7 +74,9 @@ in
 {
   inherit (jobs) cleanSources;
   inherit (jobs) cleanPackages;
+  inherit (jobs) types;
   inherit (jobs) haskell;
 }
 // pkgs.lib.testing.enumerateConstituents jobs.cleanSources
 // pkgs.lib.testing.enumerateConstituents jobs.cleanPackages
+// pkgs.lib.testing.enumerateConstituents jobs.types

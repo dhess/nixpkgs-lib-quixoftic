@@ -2,6 +2,10 @@ self: super:
 
 let
 
+  callLibs = file: import file { lib = super.lib; };
+
+  localTypes = callLibs ./lib/types.nix;
+
   ## Functions for cleaning local source directories. These are useful
   ## for filtering out files in your local repo that should not
   ## contribute to a Nix hash, so that you can just `src = ./.` in
@@ -157,5 +161,8 @@ in
       inherit enumerateConstituents;
     };
 
+    nixpkgs-lib-quixoftic-path = ../.;
+
+    types = (super.lib.types or {}) // localTypes;
   };
 }
