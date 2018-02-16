@@ -1,6 +1,8 @@
 ## Additional useful types, mostly for NixOS modules.
 
-{ lib }:
+{ lib
+, ...
+}:
 
 with lib;
 

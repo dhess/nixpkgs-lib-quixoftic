@@ -35,4 +35,9 @@ in
   ## Types tests.
 
   nlqStringTypes = callPackage ./types {};
+
+
+  ## Security tests.
+
+  nlqFfdhe = callPackage ./security/ffdhe {};
 }

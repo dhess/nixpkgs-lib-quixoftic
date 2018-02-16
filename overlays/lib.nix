@@ -2,12 +2,17 @@ self: super:
 
 let
 
-  callLibs = file: import file { lib = super.lib; };
+  callLibs = file: import file { pkgs = self; lib = self.lib; };
 
 
   ## New types for NixOS modules.
 
   localTypes = callLibs ./lib/types.nix;
+
+
+  ## Security-related functions, groups, etc.
+
+  localSecurity = callLibs ./lib/security.nix;
 
 
   ## Functions for cleaning local source directories. These are useful
@@ -166,6 +171,8 @@ in
     inherit cleanSourceAllExtraneous;
 
     inherit cleanPackage;
+
+    security = (super.lib.security or {}) // localSecurity;
 
     testing = (super.lib.testing or {}) // {
       inherit enumerateConstituents;
