@@ -64,6 +64,15 @@ checkConfigOutput "foo" config.value ./declare-non-empty-string.nix ./define-val
 checkConfigError "The option .* in .* is not of type \`string (with check: non-empty)'." config.value ./declare-non-empty-string.nix ./define-value-empty-string.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: non-empty)'." config.value ./declare-non-empty-string.nix ./define-value-empty-string-2.nix
 
+# IPv4 addrs
+checkConfigOutput "0.0.0.0" config.value ./declare-ipv4.nix ./define-value-ipv4-0.0.0.0.nix
+checkConfigOutput "255.255.255.255" config.value ./declare-ipv4.nix ./define-value-ipv4-255.255.255.255.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-1.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-2.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-3.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-5.nix
+
 # Ports.
 checkConfigOutput "8000" config.value ./declare-port.nix ./define-value-port-8000.nix
 checkConfigOutput "0" config.value ./declare-port.nix ./define-value-port-0.nix
