@@ -59,25 +59,65 @@ checkConfigError() {
     fi
 }
 
-# String types.
+## String types.
+
 checkConfigOutput "foo" config.value ./declare-non-empty-string.nix ./define-value-string.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: non-empty)'." config.value ./declare-non-empty-string.nix ./define-value-empty-string.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: non-empty)'." config.value ./declare-non-empty-string.nix ./define-value-empty-string-2.nix
 
-# IPv4 addrs
+
+## IPv4 addrs (any format)
+
 checkConfigOutput "0.0.0.0" config.value ./declare-ipv4.nix ./define-value-ipv4-0.0.0.0.nix
+checkConfigOutput "0.0.0.0/0" config.value ./declare-ipv4.nix ./define-value-ipv4-0.0.0.0-slash-0.nix
 checkConfigOutput "255.255.255.255" config.value ./declare-ipv4.nix ./define-value-ipv4-255.255.255.255.nix
+checkConfigOutput "255.255.255.255/32" config.value ./declare-ipv4.nix ./define-value-ipv4-255.255.255.255-slash-32.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-1.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-2.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-3.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-4.nix
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-5.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-6.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address)'." config.value ./declare-ipv4.nix ./define-value-invalid-ipv4-7.nix
 
-# Ports.
+
+## IPv4 addrs (CIDR notation)
+
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-ipv4-0.0.0.0.nix
+checkConfigOutput "0.0.0.0/0" config.value ./declare-ipv4Cidr.nix ./define-value-ipv4-0.0.0.0-slash-0.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-ipv4-255.255.255.255.nix
+checkConfigOutput "255.255.255.255/32" config.value ./declare-ipv4Cidr.nix ./define-value-ipv4-255.255.255.255-slash-32.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-invalid-ipv4-1.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-invalid-ipv4-2.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-invalid-ipv4-3.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-invalid-ipv4-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-invalid-ipv4-5.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-invalid-ipv4-6.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address with CIDR suffix)'." config.value ./declare-ipv4Cidr.nix ./define-value-invalid-ipv4-7.nix
+
+
+## IPv4 addrs (non-CIDR)
+
+checkConfigOutput "0.0.0.0" config.value ./declare-ipv4NoCidr.nix ./define-value-ipv4-0.0.0.0.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-ipv4-0.0.0.0-slash-0.nix
+checkConfigOutput "255.255.255.255" config.value ./declare-ipv4NoCidr.nix ./define-value-ipv4-255.255.255.255.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-ipv4-255.255.255.255-slash-32.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-1.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-2.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-3.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-5.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-6.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-7.nix
+
+
+## Ports.
+
 checkConfigOutput "8000" config.value ./declare-port.nix ./define-value-port-8000.nix
 checkConfigOutput "0" config.value ./declare-port.nix ./define-value-port-0.nix
 checkConfigError "The option .* in .* is not of type \`integer between 0 and 65535 (both inclusive)'." config.value ./declare-port.nix ./define-value-negative-int.nix
 checkConfigError "The option .* in .* is not of type \`integer between 0 and 65535 (both inclusive)'." config.value ./declare-port.nix ./define-value-int-65536.nix
+
 
 cat <<EOF
 ====== module tests ======

@@ -99,6 +99,96 @@ runTests {
     expected = true;
   };
 
+  test-isV4Cidr-1 = {
+    expr = isV4Cidr "10.0.10.1";
+    expected = false;
+  };
+
+  test-isV4Cidr-2 = {
+    expr = isV4Cidr "10.0.10.1/24";
+    expected = true;
+  };
+
+  test-isV4Cidr-3 = {
+    expr = isV4Cidr "10.0.10/24";
+    expected = false;
+  };
+
+  test-isV4Cidr-4 = {
+    expr = isV4Cidr "256.255.255.255";
+    expected = false;
+  };
+
+  test-isV4Cidr-5 = {
+    expr = isV4Cidr "10.0.10.1/33";
+    expected = false;
+  };
+
+  test-isV4Cidr-6 = {
+    expr = isV4Cidr "-10.0.10.1";
+    expected = false;
+  };
+
+  test-isV4Cidr-7 = {
+    expr = isV4Cidr "10.0.10.1.33";
+    expected = false;
+  };
+
+  test-isV4Cidr-8 = {
+    expr = isV4Cidr "0.0.0.0/0";
+    expected = true;
+  };
+
+  test-isV4Cidr-9 = {
+    expr = isV4Cidr "255.255.255.255/32";
+    expected = true;
+  };
+
+  test-isV4NoCidr-1 = {
+    expr = isV4NoCidr "10.0.10.1";
+    expected = true;
+  };
+
+  test-isV4NoCidr-2 = {
+    expr = isV4NoCidr "10.0.10.1/24";
+    expected = false;
+  };
+
+  test-isV4NoCidr-3 = {
+    expr = isV4NoCidr "10.0.10/24";
+    expected = false;
+  };
+
+  test-isV4NoCidr-4 = {
+    expr = isV4NoCidr "256.255.255.255";
+    expected = false;
+  };
+
+  test-isV4NoCidr-5 = {
+    expr = isV4NoCidr "10.0.10.1/33";
+    expected = false;
+  };
+
+  test-isV4NoCidr-6 = {
+    expr = isV4NoCidr "-10.0.10.1";
+    expected = false;
+  };
+
+  test-isV4NoCidr-7 = {
+    expr = isV4NoCidr "10.0.10.1.33";
+    expected = false;
+  };
+
+  test-isV4NoCidr-8 = {
+    expr = isV4NoCidr "0.0.0.0/0";
+    expected = false;
+  };
+
+  test-isV4NoCidr-9 = {
+    expr = isV4NoCidr "255.255.255.255/32";
+    expected = false;
+  };
+
   test-v4Addr-1 = {
     expr = v4Addr (parseV4 "10.0.10.1");
     expected = [ 10 0 10 1 ];

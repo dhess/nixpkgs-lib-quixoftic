@@ -22,6 +22,8 @@ in rec
   ## IP addresses.
 
   ipv4 = addCheckDesc "valid IPv4 address" types.str ipaddr.isV4;
+  ipv4Cidr = addCheckDesc "valid IPv4 address with CIDR suffix" types.str ipaddr.isV4Cidr;
+  ipv4NoCidr = addCheckDesc "valid IPv4 address, no CIDR suffix" types.str ipaddr.isV4NoCidr;
 
 
   ## Integer types.

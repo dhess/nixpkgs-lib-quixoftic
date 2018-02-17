@@ -37,6 +37,18 @@ let
 
   isV4 = s: (parseV4 s) != [];
 
+  isV4Cidr = s:
+    let
+      l = parseV4 s;
+    in
+      l != [] && (v4CidrSuffix l) != [];
+
+  isV4NoCidr = s:
+    let
+      l = parseV4 s;
+    in
+      l != [] && (v4CidrSuffix l) == [];
+        
 
   ## These functions deal with IPv4 addresses expressed in list
   ## format, e.g., [ 10 0 10 1 24 ] for 10.0.10.1/24, or [ 10 0 10 1 ]
@@ -75,7 +87,7 @@ let
 in
 {
   inherit parseV4;
-  inherit isV4;
+  inherit isV4 isV4Cidr isV4NoCidr;
 
   inherit v4Addr v4CidrSuffix;
   inherit unparseV4;
