@@ -8,9 +8,6 @@ with lib;
 
 let
 
-  stringTail = x: builtins.substring 1 (builtins.stringLength x) x;
-
-
   ## These functions deal with IPv4 addresses expressed as a string.
   
   # Note: does not handle "terse" CIDR syntax, e.g., "10.0.10/24" does
@@ -27,7 +24,13 @@ let
       good = builtins.match "^([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)(/[[:digit:]]+)?$" s;
       parse = if good == null then [] else good;
       octets = map toInt (v4Addr parse);
-      suffix = map (x: toInt (stringTail x)) (v4CidrSuffix parse);
+      suffix =
+        let
+          suffix' = v4CidrSuffix parse;
+        in
+          if (suffix' == [] || suffix' == [null])
+          then []
+          else map (x: toInt (removePrefix "/" x)) suffix';
     in
       if (parse != [])              &&
          (all (x: x <= 255) octets) &&
@@ -54,9 +57,8 @@ let
   ## format, e.g., [ 10 0 10 1 24 ] for 10.0.10.1/24, or [ 10 0 10 1 ]
   ## for 10.0.10.1 (no CIDR suffix).
 
-  v4Addr = sublist 0 4;
-
-  v4CidrSuffix = sublist 4 4;
+  v4Addr = take 4;
+  v4CidrSuffix = drop 4;
 
   # [ 10 0 10 1 ] -> "10.0.10.1"
   # [ 10 0 10 1 24 ] -> "10.0.10.1/24"
