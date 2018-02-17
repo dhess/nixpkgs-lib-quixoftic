@@ -21,11 +21,7 @@ in rec
 
   ## IP addresses.
 
-  ipv4 = addCheckDesc "valid IPv4 address" types.str
-    (x:
-      let octets = builtins.match "^([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)$" x;
-      in
-        octets != null && all (x: (toInt x) <= 255) octets);
+  ipv4 = addCheckDesc "valid IPv4 address" types.str ipaddr.isV4;
 
 
   ## Integer types.

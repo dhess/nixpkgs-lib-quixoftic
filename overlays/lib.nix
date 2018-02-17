@@ -15,6 +15,11 @@ let
   localSecurity = callLibs ./lib/security.nix;
 
 
+  ## Convenience functions for IP addresses.
+
+  localIPAddr = callLibs ./lib/ipaddr.nix;
+
+
   ## Functions for cleaning local source directories. These are useful
   ## for filtering out files in your local repo that should not
   ## contribute to a Nix hash, so that you can just `src = ./.` in
@@ -171,6 +176,8 @@ in
     inherit cleanSourceAllExtraneous;
 
     inherit cleanPackage;
+
+    ipaddr = (super.lib.ipaddr or {}) // localIPAddr;
 
     security = (super.lib.security or {}) // localSecurity;
 
