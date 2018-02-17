@@ -54,11 +54,11 @@ let
     };
 
 
-    types = pkgs.releaseTools.aggregate {
-      name = "nixpkgs-lib-quixoftic-types";
-      meta.description = "nixpkgs-lib-quixoftic types tests";
+    ipaddr = pkgs.releaseTools.aggregate {
+      name = "nixpkgs-lib-quixoftic-ipaddr";
+      meta.description = "nixpkgs-lib-quixoftic ipaddr tests";
       constituents = with jobs; [
-        nlqTypes.x86_64-linux
+        nlqIPAddr.x86_64-linux
       ];
     };
 
@@ -67,6 +67,14 @@ let
       meta.description = "nixpkgs-lib-quixoftic security tests";
       constituents = with jobs; [
         nlqFfdhe.x86_64-linux
+      ];
+    };
+
+    types = pkgs.releaseTools.aggregate {
+      name = "nixpkgs-lib-quixoftic-types";
+      meta.description = "nixpkgs-lib-quixoftic types tests";
+      constituents = with jobs; [
+        nlqTypes.x86_64-linux
       ];
     };
 
@@ -82,11 +90,13 @@ in
 {
   inherit (jobs) cleanSources;
   inherit (jobs) cleanPackages;
-  inherit (jobs) types;
-  inherit (jobs) security;
   inherit (jobs) haskell;
+  inherit (jobs) ipaddr;
+  inherit (jobs) security;
+  inherit (jobs) types;
 }
 // pkgs.lib.testing.enumerateConstituents jobs.cleanSources
 // pkgs.lib.testing.enumerateConstituents jobs.cleanPackages
-// pkgs.lib.testing.enumerateConstituents jobs.types
+// pkgs.lib.testing.enumerateConstituents jobs.ipaddr
 // pkgs.lib.testing.enumerateConstituents jobs.security
+// pkgs.lib.testing.enumerateConstituents jobs.types

@@ -27,7 +27,7 @@ let
       good = builtins.match "^([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)(/[[:digit:]]+)?$" s;
       parse = if good == null then [] else good;
       octets = map toInt (v4Addr parse);
-      suffix = map (x: toInt (stringTail x)) (cidrSuffix parse);
+      suffix = map (x: toInt (stringTail x)) (v4CidrSuffix parse);
     in
       if (parse != [])              &&
          (all (x: x <= 255) octets) &&
@@ -44,7 +44,7 @@ let
 
   v4Addr = sublist 0 4;
 
-  cidrSuffix = sublist 4 4;
+  v4CidrSuffix = sublist 4 4;
 
   # [ 10 0 10 1 ] -> "10.0.10.1"
   # [ 10 0 10 1 24 ] -> "10.0.10.1/24"
@@ -56,7 +56,7 @@ let
   unparseV4 = l:
     let
       octets = v4Addr l;
-      suffix = cidrSuffix l;
+      suffix = v4CidrSuffix l;
     in
       if (length l < 4)                     ||
          (length l > 5)                     ||
@@ -77,6 +77,6 @@ in
   inherit parseV4;
   inherit isV4;
 
-  inherit v4Addr cidrSuffix;
+  inherit v4Addr v4CidrSuffix;
   inherit unparseV4;
 }
