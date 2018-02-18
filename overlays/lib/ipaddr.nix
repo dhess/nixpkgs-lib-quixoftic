@@ -51,7 +51,24 @@ let
       l = parseIPv4 s;
     in
       l != [] && (ipv4CIDRSuffix l) == [];
-        
+
+  isIPv4RFC1918 = s:
+    let
+      parse = parseIPv4 s;
+    in
+      if parse == []
+      then false
+      else
+        let
+          suffix = ipv4CIDRSuffix parse;
+          octet1 = elemAt parse 0;
+          octet2 = elemAt parse 1;
+          block1 = octet1 == 10 && (suffix == [] || head suffix >= 8);
+          block2 = octet1 == 172 && (octet2 >= 16 && octet2 < 32) && (suffix == [] || head suffix >= 12);
+          block3 = octet1 == 192 && octet2 == 168 && (suffix == [] || head suffix >= 16);
+        in
+          block1 || block2 || block3;
+
 
   ## These functions deal with IPv4 addresses expressed in list
   ## format, e.g., [ 10 0 10 1 24 ] for 10.0.10.1/24, or [ 10 0 10 1 ]
@@ -164,7 +181,7 @@ let
 in
 {
   inherit parseIPv4;
-  inherit isIPv4 isIPv4CIDR isIPv4NoCIDR;
+  inherit isIPv4 isIPv4CIDR isIPv4NoCIDR isIPv4RFC1918;
 
   inherit ipv4Addr ipv4CIDRSuffix;
   inherit unparseIPv4;

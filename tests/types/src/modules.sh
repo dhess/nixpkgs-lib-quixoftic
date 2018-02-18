@@ -111,6 +111,44 @@ checkConfigError "The option .* in .* is not of type \`string (with check: valid
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-7.nix
 
 
+## RFC 1918 IPv4 addrs (any format)
+
+checkConfigOutput "10.0.0.0" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-10.0.0.0.nix
+checkConfigOutput "10.0.0.0/8" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-10.0.0.0-slash-8.nix
+checkConfigOutput "172.16.0.0" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.16.0.0.nix
+checkConfigOutput "172.16.0.0/12" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.16.0.0-slash-12.nix
+checkConfigOutput "172.31.255.255" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.31.255.255.nix
+checkConfigOutput "172.31.255.255/12" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.31.255.255-slash-12.nix
+checkConfigOutput "192.168.0.0" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.168.0.0.nix
+checkConfigOutput "192.168.0.0/16" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.168.0.0-slash-16.nix
+checkConfigOutput "192.168.255.255" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.168.255.255.nix
+checkConfigOutput "192.168.255.255/16" config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.168.255.255-slash-16.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-10.0.0.0-slash-7.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.16.0.0-slash-11.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.31.255.255-slash-11.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.32.0.0.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.32.0.0-slash-12.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.15.255.255.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-172.15.255.255-slash-12.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.168.0.0-slash-15.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.167.255.255-slash-16.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.169.0.0.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.169.0.0-slash-16.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.167.255.255.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-192.167.255.255-slash-16.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-0.0.0.0.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-0.0.0.0-slash-0.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-255.255.255.255.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-ipv4-255.255.255.255-slash-32.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-invalid-ipv4-1.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-invalid-ipv4-2.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-invalid-ipv4-3.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-invalid-ipv4-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-invalid-ipv4-5.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-invalid-ipv4-6.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid RFC 1918 IPv4 address)'." config.value ./declare-ipv4rfc1918.nix ./define-value-invalid-ipv4-7.nix
+
+
 ## IPv6 addrs (any format)
 
 checkConfigOutput "1:2:3:4:5:6::7" config.value ./declare-ipv6.nix ./define-value-ipv6-1-2-3-4-5-6--7.nix
