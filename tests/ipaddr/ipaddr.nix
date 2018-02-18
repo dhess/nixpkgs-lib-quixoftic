@@ -7,7 +7,9 @@ with import <nixpkgs> { };
 with pkgs.lib;
 with pkgs.lib.ipaddr;
 
-runTests {
+runTests rec {
+
+  ## IPv4.
 
   test-parseV4-1 = {
     expr = parseV4 "10.0.10.1";
@@ -237,6 +239,244 @@ runTests {
   test-unparseV4-6 = {
     expr = unparseV4 [ 10 0 10 1 24 3 ];
     expected = "";
+  };
+
+
+  ## IPv6.
+
+  goodAddrs = [
+    "::1"
+    "::"
+    "::1:2:3"
+    "1::2:3"
+    "1:2::3:4"
+    "fe80::"
+    "0:0:0:0:0:0:0:0"
+    "0:0:0:0:0:0:0:1"
+    "0123:4567:89ab:cdef:0123:4567:89ab:cdef"
+    "2001:db8:0:0:0:0:0:a"
+    "2001:db8::a"
+    "2001:db8:0:0:0:0:3:a"
+    "2001:db8::3:a"
+    "2001:db8:0:1:0:0:0:a"
+    "2001:db8:0:1::a"
+    "2001:db8:0:1:0:0:1:a"
+    "2001:db8:0:1::1:a"
+    "1:2:3:4:5:6:7::"
+    "1:2:3:4:5:6::"
+    "1:2:3:4:5::"
+    "1:2:3:4::"
+    "1:2:3::"
+    "1:2::"
+    "1::"
+
+    # Dot-decimal notation for IPv4-mapped IPv6 addresses.
+    "1:2:3:4:5:6:255.255.255.255"
+    "1:2:3:4:5:6:0.0.0.0"
+    "1:2:3:4:5::255.255.255.255"
+    "1:2:3:4:5::0.0.0.0"
+    "1:2:3:4::255.255.255.255"
+    "1:2:3:4::0.0.0.0"
+    "1:2:3::255.255.255.255"
+    "1:2:3::0.0.0.0"
+    "1:2::255.255.255.255"
+    "1:2::0.0.0.0"
+    "1::255.255.255.255"
+    "1::0.0.0.0"
+    "::ffff:192.168.1.1"
+  ];
+
+  test-parseV6-good = rec {
+    expr = flatten (map parseV6 goodAddrs);
+    expected = goodAddrs;
+  };
+
+  test-parseV6-good-upper-case = rec {
+    expr = flatten (map (x: parseV6 (toUpper x)) goodAddrs);
+    expected = map toUpper goodAddrs;
+  };
+
+  test-parseV6-cidr-0 = rec {
+    addrs = map (x: x + "/0") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-parseV6-cidr-128 = rec {
+    addrs = map (x: x + "/128") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  # Note: see docs for `parseV6`, but technically only the non-global
+  # scope addresses should parse with a scope ID. However, the current
+  # implementation does not enforce this.
+  
+  test-parseV6-scope-id-1 = rec {
+    addrs = map (x: x + "%eth0") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-parseV6-scope-id-2 = rec {
+    addrs = map (x: x + "%wg0") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-parseV6-scope-id-3 = rec {
+    addrs = map (x: x + "%0") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-parseV6-scope-id-plus-cidr = rec {
+    addrs = map (x: x + "%eth0/64") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-parseV6-scope-id-plus-cidr-2 = rec {
+    addrs = map (x: x + "%wg0/56") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-parseV6-scope-id-plus-cidr-3 = rec {
+    addrs = map (x: x + "%0/32") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  # test-parseV6-bad-cidr-1 = rec {
+  #   addrs = map (x: x + "/129") goodAddrs;
+  #   expr = flatten (map parseV6 addrs);
+  #   expected = [];
+  # };
+
+  test-parseV6-bad-cidr-2 = rec {
+    addrs = map (x: x + "/a") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = [];
+  };
+
+  test-parseV6-bad-cidr-3 = rec {
+    addrs = map (x: x + "/2a") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = [];
+  };
+
+  test-parseV6-bad-too-short = rec {
+    badAddrs = [
+      ""
+      "1:2:3:4:5:6:7"
+      "1:2::3:4:5:6:7::8"
+     ];
+    expr = flatten (map parseV6 badAddrs);
+    expected = [];
+  };
+
+  test-parseV6-bad-too-long = rec {
+    badAddrs = [
+      "1:2:3:4:5:6:7:8:9"
+      "1:2::3:4:5:6:7::8:9"
+     ];
+    expr = flatten (map parseV6 badAddrs);
+    expected = [];
+  };
+
+  test-parseV6-bad-ipv4 = rec {
+    badAddrs = [
+      # Dot-decimal notation for IPv4-mapped IPv6 addresses.
+      "1:2:3:4:5:6:7:255.255.255.255"
+      "1:2:3:4:5:6:7:0.0.0.0"
+      "1:2:3:4:5::256.255.255.255"
+      "1:2:3:4:5::255.256.255.255"
+      "1:2:3:4:5::255.255.256.255"
+      "1:2:3:4:5::255.255.255.256"
+      ":::ffff:192.168.1.1"
+      ":ffff:192.168.1.1"
+
+      "1:2:3:4:5:6:1.2.3"
+      "1:2:3:4:5:6:0.0.0"
+      "1:2:3:4:5::1.2.3"
+      "1:2:3:4:5::0.0.0"
+      "1:2:3:4::1.2.3"
+      "1:2:3:4::0.0.0"
+      "1:2:3::1.2.3"
+      "1:2:3::0.0.0"
+      "1:2::1.2.3"
+      "1:2::0.0.0"
+      "1::1.2.3"
+      "1::0.0.0"
+
+      "1:2:3:4:5:6:a.1.2.3"
+      "1:2:3:4:5:6:a.0.0.0"
+      "1:2:3:4:5:6:255.a.255.255"
+      "1:2:3:4:5:6:0.a.0.0"
+      "1:2:3:4:5:6:255.255.a.255"
+      "1:2:3:4:5:6:0.0.a.0"
+      "1:2:3:4:5:6:255.255.255.a"
+      "1:2:3:4:5:6:0.0.0.a"
+      "1:2:3:4:5:::a.255.255.255"
+      "1:2:3:4:5:::a.0.0.0"
+      "1:2:3:4:5:::255.a.255.255"
+      "1:2:3:4:5:::0.a.0.0"
+      "1:2:3:4:5:::255.255.a.255"
+      "1:2:3:4:5:::0.0.a.0"
+      "1:2:3:4:5:::255.255.255.a"
+      "1:2:3:4:5:::0.0.0.a"
+
+      # XXX dhess - these pass. Should they?
+      # "1:2:3:4:5:6:255.255.255"
+      # "1:2:3:4:5::255.255.255"
+      # "1:2:3:4::255.255.255"
+      # "1:2:3::255.255.255"
+      # "1:2::255.255.255"
+      # "1::255.255.255"
+      
+     ];
+    expr = flatten (map parseV6 badAddrs);
+    expected = [];
+  };
+
+  test-parseV6-bad-format = rec {
+    badAddrs = [
+      "a"
+      "abcd"
+      ":::1"
+      "::::1"
+      "a:::1"
+      "a::::1"
+      "1:2:::3"
+      "1:2::::3"
+      "12345678::1"
+      "1:2:3:4:"
+      "1:2:3:4:5:6:7:8:"
+      "1:2:3:4::1:"
+      "1::2::3:4"
+      "1::2::3::4::5::6::7::8"
+      "1: 2::3"
+      "12345::1"
+      "::12345"
+      "habc::1"
+      "1234::/"
+      "1234::1/"
+      "::/"
+      "::1/"
+      "1234::1/"
+      "1234::%"
+      "1234::1%"
+      "1234::1%eth0/"
+      "1234::1/%eth0"
+      "1234::/%eth0"
+      "1234::/64%eth0"
+      "1234::1/64%eth0"
+      "1234::1%/eth0"
+      "1234::%/eth0"
+     ];
+    expr = flatten (map parseV6 badAddrs);
+    expected = [];
   };
 
 }
