@@ -7,6 +7,12 @@ with import <nixpkgs> { };
 with pkgs.lib;
 with pkgs.lib.ipaddr;
 
+let
+
+  allTrue = all id;
+  anyTrue = any id;
+
+in
 runTests rec {
 
   ## IPv4.
@@ -286,12 +292,12 @@ runTests rec {
     "::ffff:192.168.1.1"
   ];
 
-  test-parseV6-good = rec {
+  test-parseV6-good = {
     expr = flatten (map parseV6 goodAddrs);
     expected = goodAddrs;
   };
 
-  test-parseV6-good-upper-case = rec {
+  test-parseV6-good-upper-case = {
     expr = flatten (map (x: parseV6 (toUpper x)) goodAddrs);
     expected = map toUpper goodAddrs;
   };
@@ -348,11 +354,11 @@ runTests rec {
     expected = addrs;
   };
 
-  # test-parseV6-bad-cidr-1 = rec {
-  #   addrs = map (x: x + "/129") goodAddrs;
-  #   expr = flatten (map parseV6 addrs);
-  #   expected = [];
-  # };
+  test-parseV6-bad-cidr-1 = rec {
+    addrs = map (x: x + "/129") goodAddrs;
+    expr = flatten (map parseV6 addrs);
+    expected = [];
+  };
 
   test-parseV6-bad-cidr-2 = rec {
     addrs = map (x: x + "/a") goodAddrs;
@@ -366,27 +372,13 @@ runTests rec {
     expected = [];
   };
 
-  test-parseV6-bad-too-short = rec {
-    badAddrs = [
+  badAddrs = [
       ""
       "1:2:3:4:5:6:7"
       "1:2::3:4:5:6:7::8"
-     ];
-    expr = flatten (map parseV6 badAddrs);
-    expected = [];
-  };
-
-  test-parseV6-bad-too-long = rec {
-    badAddrs = [
       "1:2:3:4:5:6:7:8:9"
       "1:2::3:4:5:6:7::8:9"
-     ];
-    expr = flatten (map parseV6 badAddrs);
-    expected = [];
-  };
 
-  test-parseV6-bad-ipv4 = rec {
-    badAddrs = [
       # Dot-decimal notation for IPv4-mapped IPv6 addresses.
       "1:2:3:4:5:6:7:255.255.255.255"
       "1:2:3:4:5:6:7:0.0.0.0"
@@ -434,14 +426,7 @@ runTests rec {
       # "1:2:3::255.255.255"
       # "1:2::255.255.255"
       # "1::255.255.255"
-      
-     ];
-    expr = flatten (map parseV6 badAddrs);
-    expected = [];
-  };
 
-  test-parseV6-bad-format = rec {
-    badAddrs = [
       "a"
       "abcd"
       ":::1"
@@ -474,9 +459,385 @@ runTests rec {
       "1234::1/64%eth0"
       "1234::1%/eth0"
       "1234::%/eth0"
-     ];
+  ];
+
+  test-parseV6-bad = {
     expr = flatten (map parseV6 badAddrs);
     expected = [];
+  };
+
+  test-isV6 = {
+    expr = allTrue (flatten (map isV6 goodAddrs));
+    expected = true;
+  };
+
+  test-isV6-good-upper-case = {
+    expr = allTrue (flatten (map (x: isV6 (toUpper x)) goodAddrs));
+    expected = true;
+  };
+
+  test-isV6-cidr-0 = rec {
+    addrs = map (x: x + "/0") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-cidr-128 = rec {
+    addrs = map (x: x + "/128") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-scope-id-1 = rec {
+    addrs = map (x: x + "%eth0") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-scope-id-2 = rec {
+    addrs = map (x: x + "%wg0") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-scope-id-3 = rec {
+    addrs = map (x: x + "%0") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-scope-id-plus-cidr = rec {
+    addrs = map (x: x + "%eth0/64") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-scope-id-plus-cidr-2 = rec {
+    addrs = map (x: x + "%wg0/56") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-scope-id-plus-cidr-3 = rec {
+    addrs = map (x: x + "%0/32") goodAddrs;
+    expr = allTrue (flatten (map isV6 addrs));
+    expected = true;
+  };
+
+  test-isV6-bad-cidr-1 = rec {
+    addrs = map (x: x + "/129") goodAddrs;
+    expr = anyTrue (flatten (map isV6 addrs));
+    expected = false;
+  };
+
+  test-isV6-bad-cidr-2 = rec {
+    addrs = map (x: x + "/a") goodAddrs;
+    expr = anyTrue (flatten (map isV6 addrs));
+    expected = false;
+  };
+
+  test-isV6-bad-cidr-3 = rec {
+    addrs = map (x: x + "/2a") goodAddrs;
+    expr = anyTrue (flatten (map isV6 addrs));
+    expected = false;
+  };
+
+  test-isV6-bad = {
+    expr = anyTrue (flatten (map isV6 badAddrs));
+    expected = false;
+  };
+
+  test-isV6Cidr = {
+    expr = anyTrue (flatten (map isV6Cidr goodAddrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-good-upper-case = {
+    expr = anyTrue (flatten (map (x: isV6Cidr (toUpper x)) goodAddrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-cidr-0 = rec {
+    addrs = map (x: x + "/0") goodAddrs;
+    expr = allTrue (flatten (map isV6Cidr addrs));
+    expected = true;
+  };
+
+  test-isV6Cidr-cidr-128 = rec {
+    addrs = map (x: x + "/128") goodAddrs;
+    expr = allTrue (flatten (map isV6Cidr addrs));
+    expected = true;
+  };
+
+  test-isV6Cidr-scope-id-1 = rec {
+    addrs = map (x: x + "%eth0") goodAddrs;
+    expr = anyTrue (flatten (map isV6Cidr addrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-scope-id-2 = rec {
+    addrs = map (x: x + "%wg0") goodAddrs;
+    expr = anyTrue (flatten (map isV6Cidr addrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-scope-id-3 = rec {
+    addrs = map (x: x + "%0") goodAddrs;
+    expr = anyTrue (flatten (map isV6Cidr addrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-scope-id-plus-cidr = rec {
+    addrs = map (x: x + "%eth0/64") goodAddrs;
+    expr = allTrue (flatten (map isV6Cidr addrs));
+    expected = true;
+  };
+
+  test-isV6Cidr-scope-id-plus-cidr-2 = rec {
+    addrs = map (x: x + "%wg0/56") goodAddrs;
+    expr = allTrue (flatten (map isV6Cidr addrs));
+    expected = true;
+  };
+
+  test-isV6Cidr-scope-id-plus-cidr-3 = rec {
+    addrs = map (x: x + "%0/32") goodAddrs;
+    expr = allTrue (flatten (map isV6Cidr addrs));
+    expected = true;
+  };
+
+  test-isV6Cidr-bad-cidr-1 = rec {
+    addrs = map (x: x + "/129") goodAddrs;
+    expr = anyTrue (flatten (map isV6Cidr addrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-bad-cidr-2 = rec {
+    addrs = map (x: x + "/a") goodAddrs;
+    expr = anyTrue (flatten (map isV6Cidr addrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-bad-cidr-3 = rec {
+    addrs = map (x: x + "/2a") goodAddrs;
+    expr = anyTrue (flatten (map isV6Cidr addrs));
+    expected = false;
+  };
+
+  test-isV6Cidr-bad = {
+    expr = anyTrue (flatten (map isV6Cidr badAddrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr = {
+    expr = allTrue (flatten (map isV6NoCidr goodAddrs));
+    expected = true;
+  };
+
+  test-isV6NoCidr-good-upper-case = {
+    expr = allTrue (flatten (map (x: isV6NoCidr (toUpper x)) goodAddrs));
+    expected = true;
+  };
+
+  test-isV6NoCidr-cidr-0 = rec {
+    addrs = map (x: x + "/0") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-cidr-128 = rec {
+    addrs = map (x: x + "/128") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-scope-id-1 = rec {
+    addrs = map (x: x + "%eth0") goodAddrs;
+    expr = allTrue (flatten (map isV6NoCidr addrs));
+    expected = true;
+  };
+
+  test-isV6NoCidr-scope-id-2 = rec {
+    addrs = map (x: x + "%wg0") goodAddrs;
+    expr = allTrue (flatten (map isV6NoCidr addrs));
+    expected = true;
+  };
+
+  test-isV6NoCidr-scope-id-3 = rec {
+    addrs = map (x: x + "%0") goodAddrs;
+    expr = allTrue (flatten (map isV6NoCidr addrs));
+    expected = true;
+  };
+
+  test-isV6NoCidr-scope-id-plus-cidr = rec {
+    addrs = map (x: x + "%eth0/64") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-scope-id-plus-cidr-2 = rec {
+    addrs = map (x: x + "%wg0/56") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-scope-id-plus-cidr-3 = rec {
+    addrs = map (x: x + "%0/32") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-bad-cidr-1 = rec {
+    addrs = map (x: x + "/129") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-bad-cidr-2 = rec {
+    addrs = map (x: x + "/a") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-bad-cidr-3 = rec {
+    addrs = map (x: x + "/2a") goodAddrs;
+    expr = anyTrue (flatten (map isV6NoCidr addrs));
+    expected = false;
+  };
+
+  test-isV6NoCidr-bad = {
+    expr = anyTrue (flatten (map isV6NoCidr badAddrs));
+    expected = false;
+  };
+
+  # Note -- it is an evaluation error to call v6Addr or v6CidrSuffix
+  # on an invalid IPv6 address.
+  
+  test-v6CidrSuffix-1 = {
+    expr = v6CidrSuffix (parseV6 "2001::1/128");
+    expected = [128];
+  };
+
+  test-v6CidrSuffix-2 = {
+    expr = v6CidrSuffix (parseV6 "::ffff:1/32");
+    expected = [32];
+  };
+
+  test-v6CidrSuffix-3 = {
+    expr = v6CidrSuffix (parseV6 "1234::1/64");
+    expected = [64];
+  };
+
+  test-v6CidrSuffix-4 = {
+    expr = v6CidrSuffix (parseV6 "1234::1%eth0/64");
+    expected = [64];
+  };
+
+  test-v6CidrSuffix-5 = {
+    expr = v6CidrSuffix (parseV6 "1234::1");
+    expected = [];
+  };
+
+  test-v6CidrSuffix-6 = {
+    expr = v6CidrSuffix (parseV6 "::1");
+    expected = [];
+  };
+
+  test-v6CidrSuffix-7 = {
+    expr = v6CidrSuffix (parseV6 "::");
+    expected = [];
+  };
+
+  test-v6Addr-1 = {
+    expr = v6Addr (parseV6 "2001::1/128");
+    expected = "2001::1";
+  };
+
+  test-v6Addr-2 = {
+    expr = v6Addr (parseV6 "::ffff:1/32");
+    expected = "::ffff:1";
+  };
+
+  test-v6Addr-3 = {
+    expr = v6Addr (parseV6 "1234::1/64");
+    expected = "1234::1";
+  };
+
+  test-v6Addr-4 = {
+    expr = v6Addr (parseV6 "1234::1%eth0/64");
+    expected = "1234::1%eth0";
+  };
+
+  test-v6Addr-5 = {
+    expr = v6Addr (parseV6 "1234::1");
+    expected = "1234::1";
+  };
+
+  test-v6Addr-6 = {
+    expr = v6Addr (parseV6 "::1");
+    expected = "::1";
+  };
+
+  test-v6Addr-7 = {
+    expr = v6Addr (parseV6 "::");
+    expected = "::";
+  };
+
+  test-unparseV6-good = {
+    expr = map unparseV6 (map parseV6 goodAddrs);
+    expected = goodAddrs;
+  };
+
+  test-unparseV6-good-upper-case = {
+    expr = map unparseV6 (map (x: parseV6 (toUpper x)) goodAddrs);
+    expected = map toUpper goodAddrs;
+  };
+
+  test-unparseV6-cidr-0 = rec {
+    addrs = map (x: x + "/0") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-unparseV6-cidr-128 = rec {
+    addrs = map (x: x + "/128") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-unparseV6-scope-id-1 = rec {
+    addrs = map (x: x + "%eth0") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-unparseV6-scope-id-2 = rec {
+    addrs = map (x: x + "%wg0") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-unparseV6-scope-id-3 = rec {
+    addrs = map (x: x + "%0") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-unparseV6-scope-id-plus-cidr = rec {
+    addrs = map (x: x + "%eth0/64") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-unparseV6-scope-id-plus-cidr-2 = rec {
+    addrs = map (x: x + "%wg0/56") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
+  };
+
+  test-unparseV6-scope-id-plus-cidr-3 = rec {
+    addrs = map (x: x + "%0/32") goodAddrs;
+    expr = map unparseV6 (map parseV6 addrs);
+    expected = addrs;
   };
 
 }

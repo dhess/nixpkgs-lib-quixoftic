@@ -107,15 +107,59 @@ let
   #
   # - It will accept IPv4-embedded IPv6 address formats and prefixes
   #   that are not RFC 6052-compliant.
+  #
+  # - If a CIDR suffix is present (e.g., /128), the regex only checks
+  #   that the prefix is one or more digits; it does not check that
+  #   the value is <= 128.
 
   rfc3986 = "(((((([[:xdigit:]]{1,4})):){6})((((([[:xdigit:]]{1,4})):(([[:xdigit:]]{1,4})))|(((((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9])))))))|((::((([[:xdigit:]]{1,4})):){5})((((([[:xdigit:]]{1,4})):(([[:xdigit:]]{1,4})))|(((((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9])))))))|((((([[:xdigit:]]{1,4})))?::((([[:xdigit:]]{1,4})):){4})((((([[:xdigit:]]{1,4})):(([[:xdigit:]]{1,4})))|(((((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9])))))))|(((((([[:xdigit:]]{1,4})):){0,1}(([[:xdigit:]]{1,4})))?::((([[:xdigit:]]{1,4})):){3})((((([[:xdigit:]]{1,4})):(([[:xdigit:]]{1,4})))|(((((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9])))))))|(((((([[:xdigit:]]{1,4})):){0,2}(([[:xdigit:]]{1,4})))?::((([[:xdigit:]]{1,4})):){2})((((([[:xdigit:]]{1,4})):(([[:xdigit:]]{1,4})))|(((((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9])))))))|(((((([[:xdigit:]]{1,4})):){0,3}(([[:xdigit:]]{1,4})))?::(([[:xdigit:]]{1,4})):)((((([[:xdigit:]]{1,4})):(([[:xdigit:]]{1,4})))|(((((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9])))))))|(((((([[:xdigit:]]{1,4})):){0,4}(([[:xdigit:]]{1,4})))?::)((((([[:xdigit:]]{1,4})):(([[:xdigit:]]{1,4})))|(((((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9]))\.){3}((25[0-5]|([1-9]|1[0-9]|2[0-4])?[0-9])))))))|(((((([[:xdigit:]]{1,4})):){0,5}(([[:xdigit:]]{1,4})))?::)(([[:xdigit:]]{1,4})))|(((((([[:xdigit:]]{1,4})):){0,6}(([[:xdigit:]]{1,4})))?::)))(%[^/]+)?(/[[:digit:]]+)?";
 
   parseV6 = s:
     let
+      # Note that if the parse matches, we still have to check the
+      # prefix (if given) is <= 128. This is a bit clumsy.
       good = builtins.match "^(${rfc3986})$" s;
       parse = if good == null then [] else take 1 good;
+      suffix = if parse == [] then [] else v6CidrSuffix parse;
     in
-      parse;
+      if (suffix == [])
+      then parse
+      else
+        if (head suffix <= 128) then parse else [];
+
+  isV6 = s: (parseV6 s) != [];
+
+  isV6Cidr = s:
+    let
+      l = parseV6 s;
+    in
+      l != [] && (v6CidrSuffix l) != [];
+
+  isV6NoCidr = s:
+    let
+      l = parseV6 s;
+    in
+      l != [] && (v6CidrSuffix l) == [];
+
+
+  ## These functions deal with IPv6 addresses represented as a
+  ## single-element string array (post-`parseV6`).
+
+  v6CidrSuffix = l:
+    let
+      addr = head l;
+      suffix = tail (splitString "/" addr);
+    in
+      if suffix == [] then [] else map toInt suffix;
+
+  v6Addr = l:
+    let
+      addr = head l;
+    in
+      head (splitString "/" addr);
+
+  unparseV6 = l: if l == [] then "" else head l;
+
 
 in
 {
@@ -126,4 +170,8 @@ in
   inherit unparseV4;
 
   inherit parseV6;
+  inherit isV6 isV6Cidr isV6NoCidr;
+
+  inherit v6Addr v6CidrSuffix;
+  inherit unparseV6;
 }
