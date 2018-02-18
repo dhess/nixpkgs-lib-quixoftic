@@ -3,7 +3,7 @@
 {
   options = {
     value = lib.mkOption {
-      type = lib.types.ipv6NoCidr;
+      type = lib.types.ipv6NoCIDR;
     };
   };
 }

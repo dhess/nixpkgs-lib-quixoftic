@@ -3,7 +3,7 @@
 {
   options = {
     value = lib.mkOption {
-      type = lib.types.ipv4Cidr;
+      type = lib.types.ipv4CIDR;
     };
   };
 }
