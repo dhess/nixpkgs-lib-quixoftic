@@ -111,6 +111,57 @@ checkConfigError "The option .* in .* is not of type \`string (with check: valid
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value ./declare-ipv4NoCidr.nix ./define-value-invalid-ipv4-7.nix
 
 
+## IPv6 addrs (any format)
+
+checkConfigOutput "1:2:3:4:5:6::7" config.value ./declare-ipv6.nix ./define-value-ipv6-1-2-3-4-5-6--7.nix
+checkConfigOutput "fe80::%eth0" config.value ./declare-ipv6.nix ./define-value-ipv6-ll-scoped.nix
+checkConfigOutput "1:2:3:4:5:6::7/64" config.value ./declare-ipv6.nix ./define-value-ipv6-1-2-3-4-5-6--7-slash-64.nix
+checkConfigOutput "fe80::%eth0/64" config.value ./declare-ipv6.nix ./define-value-ipv6-ll-scoped-slash-64.nix
+checkConfigOutput "::ffff:1.2.3.4" config.value ./declare-ipv6.nix ./define-value-ipv4-in-ipv6-ffff-1-2-3-4.nix
+checkConfigOutput "::ffff:1.2.3.4/96" config.value ./declare-ipv6.nix ./define-value-ipv4-in-ipv6-ffff-1-2-3-4-slash-96.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address)'." config.value ./declare-ipv6.nix ./define-value-invalid-ipv6-1.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address)'." config.value ./declare-ipv6.nix ./define-value-invalid-ipv6-2.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address)'." config.value ./declare-ipv6.nix ./define-value-invalid-ipv6-3.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address)'." config.value ./declare-ipv6.nix ./define-value-invalid-ipv6-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address)'." config.value ./declare-ipv6.nix ./define-value-invalid-ipv6-5.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address)'." config.value ./declare-ipv6.nix ./define-value-invalid-ipv6-6.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address)'." config.value ./declare-ipv6.nix ./define-value-invalid-ipv6-7.nix
+
+
+## IPv6 addrs (CIDR notation)
+
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-ipv6-1-2-3-4-5-6--7.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-ipv6-ll-scoped.nix
+checkConfigOutput "1:2:3:4:5:6::7/64" config.value ./declare-ipv6Cidr.nix ./define-value-ipv6-1-2-3-4-5-6--7-slash-64.nix
+checkConfigOutput "fe80::%eth0/64" config.value ./declare-ipv6Cidr.nix ./define-value-ipv6-ll-scoped-slash-64.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-ipv4-in-ipv6-ffff-1-2-3-4.nix
+checkConfigOutput "::ffff:1.2.3.4/96" config.value ./declare-ipv6Cidr.nix ./define-value-ipv4-in-ipv6-ffff-1-2-3-4-slash-96.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-invalid-ipv6-1.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-invalid-ipv6-2.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-invalid-ipv6-3.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-invalid-ipv6-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-invalid-ipv6-5.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-invalid-ipv6-6.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address with CIDR suffix)'." config.value ./declare-ipv6Cidr.nix ./define-value-invalid-ipv6-7.nix
+
+
+## IPv6 addrs (non-CIDR)
+
+checkConfigOutput "1:2:3:4:5:6::7" config.value ./declare-ipv6NoCidr.nix ./define-value-ipv6-1-2-3-4-5-6--7.nix
+checkConfigOutput "fe80::%eth0" config.value ./declare-ipv6NoCidr.nix ./define-value-ipv6-ll-scoped.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-ipv6-1-2-3-4-5-6--7-slash-64.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-ipv6-ll-scoped-slash-64.nix
+checkConfigOutput "::ffff:1.2.3.4" config.value ./declare-ipv6NoCidr.nix ./define-value-ipv4-in-ipv6-ffff-1-2-3-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-ipv4-in-ipv6-ffff-1-2-3-4-slash-96.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-1.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-2.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-3.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-4.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-5.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-6.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-7.nix
+
+
 ## Ports.
 
 checkConfigOutput "8000" config.value ./declare-port.nix ./define-value-port-8000.nix
