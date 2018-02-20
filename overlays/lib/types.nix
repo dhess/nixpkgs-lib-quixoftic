@@ -4,12 +4,13 @@
 , ...
 }:
 
-with lib;
-
 let
+
+  inherit (lib) all ipaddr stringToCharacters types resolvesToStorePath;
 
   addCheckDesc = desc: elemType: check: types.addCheck elemType check
     // { description = "${elemType.description} (with check: ${desc})"; };
+
 
 in rec
 {
@@ -17,6 +18,13 @@ in rec
 
   nonEmptyStr = addCheckDesc "non-empty" types.str
     (x: x != "" && ! (all (c: c == " " || c == "\t") (stringToCharacters x)));
+
+
+  ## Path types.
+
+  storePath = addCheckDesc "in the Nix store" types.path resolvesToStorePath;
+  nonStorePath = addCheckDesc "not in the Nix store" types.path
+    (x: ! resolvesToStorePath x);
 
 
   ## IP addresses.

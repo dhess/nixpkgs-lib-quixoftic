@@ -32,6 +32,9 @@ stdenv.mkDerivation {
     cd ${pkgs.lib.nixpkgs-lib-quixoftic-path}/tests/types/src
     ./modules.sh
 
+    nix-instantiate --eval --strict resolvesToStorePath.nix
+    [[ "$(nix-instantiate --eval --strict resolvesToStorePath.nix)" == "[ ]" ]]
+
     touch $out
   '';
 }

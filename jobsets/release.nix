@@ -53,7 +53,6 @@ let
       ];
     };
 
-
     ipaddr = pkgs.releaseTools.aggregate {
       name = "nixpkgs-lib-quixoftic-ipaddr";
       meta.description = "nixpkgs-lib-quixoftic ipaddr tests";

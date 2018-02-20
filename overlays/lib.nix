@@ -129,6 +129,18 @@ let
   }));
 
 
+  ## True if the argument is a path (or a string, when treated as a
+  ## path) that resolves to a Nix store path; i.e., the path begins
+  ## with `/nix/store`. It is an error to call this on anything that
+  ## doesn't evaluate in a string context.
+
+  resolvesToStorePath = x:
+    let
+      stringContext = "${x}";
+    in builtins.substring 0 1 stringContext == "/"
+    && super.lib.hasPrefix builtins.storeDir stringContext;
+
+
   ## Convenience functions for tests, esp. for Hydras.
 
   # Aggregates are handy for defining jobs (especially for subsets of
@@ -176,6 +188,8 @@ in
     inherit cleanSourceAllExtraneous;
 
     inherit cleanPackage;
+
+    inherit resolvesToStorePath;
 
     ipaddr = (super.lib.ipaddr or {}) // localIPAddr;
 

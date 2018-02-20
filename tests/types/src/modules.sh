@@ -208,6 +208,30 @@ checkConfigError "The option .* in .* is not of type \`integer between 0 and 655
 checkConfigError "The option .* in .* is not of type \`integer between 0 and 65535 (both inclusive)'." config.value ./declare-port.nix ./define-value-int-65536.nix
 
 
+# ## Store paths.
+
+checkConfigOutput "" config.value ./declare-store-path.nix ./define-value-store-path-1.nix
+checkConfigOutput "" config.value ./declare-store-path.nix ./define-value-store-path-2.nix
+checkConfigOutput "" config.value ./declare-store-path.nix ./define-value-store-path-3.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: in the Nix store)'." config.value ./declare-store-path.nix ./define-value-non-store-path-1.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: in the Nix store)'." config.value ./declare-store-path.nix ./define-value-non-store-path-2.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: in the Nix store)'." config.value ./declare-store-path.nix ./define-value-not-a-path-1.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: in the Nix store)'." config.value ./declare-store-path.nix ./define-value-not-a-path-2.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: in the Nix store)'." config.value ./declare-store-path.nix ./define-value-not-a-path-3.nix
+
+
+# ## Non-store paths.
+
+checkConfigError "The option .* in .* is not of type \`path (with check: not in the Nix store)'." config.value ./declare-non-store-path.nix ./define-value-store-path-1.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: not in the Nix store)'." config.value ./declare-non-store-path.nix ./define-value-store-path-2.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: not in the Nix store)'." config.value ./declare-non-store-path.nix ./define-value-store-path-3.nix
+checkConfigOutput "" config.value ./declare-non-store-path.nix ./define-value-non-store-path-1.nix
+checkConfigOutput "" config.value ./declare-non-store-path.nix ./define-value-non-store-path-2.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: not in the Nix store)'." config.value ./declare-non-store-path.nix ./define-value-not-a-path-1.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: not in the Nix store)'." config.value ./declare-non-store-path.nix ./define-value-not-a-path-2.nix
+checkConfigError "The option .* in .* is not of type \`path (with check: not in the Nix store)'." config.value ./declare-non-store-path.nix ./define-value-not-a-path-3.nix
+
+
 cat <<EOF
 ====== module tests ======
 $pass Pass
