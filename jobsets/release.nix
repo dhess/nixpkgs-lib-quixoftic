@@ -61,6 +61,14 @@ let
       ];
     };
 
+    misc = pkgs.releaseTools.aggregate {
+      name = "nixpkgs-lib-quixoftic-misc";
+      meta.description = "nixpkgs-lib-quixoftic miscellaneous tests";
+      constituents = with jobs; [
+        nlqMisc.x86_64-linux
+      ];
+    };
+
     security = pkgs.releaseTools.aggregate {
       name = "nixpkgs-lib-quixoftic-security";
       meta.description = "nixpkgs-lib-quixoftic security tests";
@@ -91,11 +99,13 @@ in
   inherit (jobs) cleanPackages;
   inherit (jobs) haskell;
   inherit (jobs) ipaddr;
+  inherit (jobs) misc;
   inherit (jobs) security;
   inherit (jobs) types;
 }
 // pkgs.lib.testing.enumerateConstituents jobs.cleanSources
 // pkgs.lib.testing.enumerateConstituents jobs.cleanPackages
 // pkgs.lib.testing.enumerateConstituents jobs.ipaddr
+// pkgs.lib.testing.enumerateConstituents jobs.misc
 // pkgs.lib.testing.enumerateConstituents jobs.security
 // pkgs.lib.testing.enumerateConstituents jobs.types

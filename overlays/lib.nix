@@ -168,6 +168,10 @@ let
   nixpkgs-lib-quixoftic-path = ../.;
 
 
+  ## Exclusive or.
+
+  exclusiveOr = x: y: (x && !y) || (!x && y);
+
 in
 {
   lib = (super.lib or {}) // {
@@ -190,6 +194,8 @@ in
     inherit cleanPackage;
 
     inherit resolvesToStorePath;
+
+    inherit exclusiveOr;
 
     ipaddr = (super.lib.ipaddr or {}) // localIPAddr;
 

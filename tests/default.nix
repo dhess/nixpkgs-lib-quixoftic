@@ -37,6 +37,11 @@ in
   nlqIPAddr = callPackage ./ipaddr {};
 
 
+  ## Miscellaneous tests.
+
+  nlqMisc = callPackage ./misc {};
+
+
   ## Types tests.
 
   nlqTypes = callPackage ./types {};
