@@ -8,24 +8,39 @@ with pkgs.lib;
 
 runTests {
 
-  test-exclusiveOr-1 = rec {
+  test-exclusiveOr-1 = {
     expr = exclusiveOr false false;
     expected = false;
   };
 
-  test-exclusiveOr-2 = rec {
+  test-exclusiveOr-2 = {
     expr = exclusiveOr true true;
     expected = false;
   };
 
-  test-exclusiveOr-3 = rec {
+  test-exclusiveOr-3 = {
     expr = exclusiveOr true false;
     expected = true;
   };
 
-  test-exclusiveOr-4 = rec {
+  test-exclusiveOr-4 = {
     expr = exclusiveOr false true;
     expected = true;
+  };
+
+  test-googleV4DNS = {
+    expr = dns.googleV4DNS;
+    expected = [ "8.8.8.8" "8.8.4.4" ];
+  };
+
+  test-googleV6DNS = {
+    expr = dns.googleV6DNS;
+    expected = [ "2001:4860:4860::8888" "2001:4860:4860::8844" ];
+  };
+
+  test-googleDNS = {
+    expr = dns.googleDNS;
+    expected = [ "8.8.8.8" "8.8.4.4" "2001:4860:4860::8888" "2001:4860:4860::8844" ];
   };
 
 }

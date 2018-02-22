@@ -20,6 +20,11 @@ let
   localIPAddr = callLibs ./lib/ipaddr.nix;
 
 
+  ## DNS-related stuff.
+
+  localDNS = callLibs ./lib/dns.nix;
+
+
   ## Functions for cleaning local source directories. These are useful
   ## for filtering out files in your local repo that should not
   ## contribute to a Nix hash, so that you can just `src = ./.` in
@@ -196,6 +201,8 @@ in
     inherit resolvesToStorePath;
 
     inherit exclusiveOr;
+
+    dns = (super.lib.dns or {}) // localDNS;
 
     ipaddr = (super.lib.ipaddr or {}) // localIPAddr;
 
