@@ -5,6 +5,21 @@ let
   callLibs = file: import file { pkgs = self; lib = self.lib; };
 
 
+  ## Securely dealing with secrets; i.e., preventing them from
+  ## entering the Nix store.
+  #
+  # These are all predicated on the behavior of the `secretPath`
+  # function, which takes a path and either return the path, if it
+  # doesn't resolve to a store path; or "/illegal-secret-path", if it
+  # does.
+
+  secretPath = path:
+    let safePath = toString path; in
+      if resolvesToStorePath safePath then "/illegal-secret-path" else safePath;
+  secretReadFile = path: builtins.readFile (secretPath path);
+  secretFileContents = path: super.lib.fileContents (secretPath path);
+
+
   ## New types for NixOS modules.
 
   localTypes = callLibs ./lib/types.nix;
@@ -180,6 +195,9 @@ let
 in
 {
   lib = (super.lib or {}) // {
+
+    # Secrets.
+    inherit secretPath secretReadFile secretFileContents;
 
     # Filters.
     inherit cleanSourceFilterNix;

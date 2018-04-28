@@ -6,7 +6,7 @@ with import <nixpkgs> {};
 
 let
 
-  inherit (pkgs.lib) all any id isStorePath resolvesToStorePath runTests;
+  inherit (pkgs.lib) all any id isStorePath resolvesToStorePath runTests secretPath;
 
   allTrue = all id;
   anyTrue = any id;
@@ -47,5 +47,18 @@ runTests rec {
     expr = anyTrue (map resolvesToStorePath notStorePaths);
     expected = false;
   };  
+
+  # secretPath utility function uses resolvesToStorePath to check for
+  # safe secret paths.
+  
+  test-secretPath = {
+    expr = secretPath ./resolvesToStorePath.nix == "/illegal-secret-path";
+    expected = false;
+  };
+
+  test-bad-secretPath = {
+    expr = secretPath pkgs.python == "/illegal-secret-path";
+    expected = true;
+  };
 
 }
