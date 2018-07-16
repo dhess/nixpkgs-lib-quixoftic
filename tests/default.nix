@@ -32,6 +32,11 @@ in
   nlqCleanPackageAllExtraneous = lib.cleanPackage lib.cleanSourceAllExtraneous (callPackage ./cleanAllExtraneous { src = ./test-dir;});
 
 
+  ## attrsets tests.
+
+  nlqAttrSets = callPackage ./attrsets {};
+
+
   ## IP address utility tests.
 
   nlqIPAddr = callPackage ./ipaddr {};

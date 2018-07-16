@@ -20,6 +20,11 @@ let
   secretFileContents = path: super.lib.fileContents (secretPath path);
 
 
+  ## Utilities on attrsets.
+
+  localAttrSets = callLibs ./lib/attrsets.nix;
+
+
   ## New types for NixOS modules.
 
   localTypes = callLibs ./lib/types.nix;
@@ -219,6 +224,8 @@ in
     inherit resolvesToStorePath;
 
     inherit exclusiveOr;
+
+    attrsets = (super.lib.attrsets or {}) // localAttrSets;
 
     dns = (super.lib.dns or {}) // localDNS;
 

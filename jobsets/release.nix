@@ -53,6 +53,14 @@ let
       ];
     };
 
+    attrsets = pkgs.releaseTools.aggregate {
+      name = "nixpkgs-lib-quixoftic-attrsets";
+      meta.description = "nixpkgs-lib-quixoftic attrsets tests";
+      constituents = with jobs; [
+        nlqAttrSets.x86_64-linux
+      ];
+    };
+
     ipaddr = pkgs.releaseTools.aggregate {
       name = "nixpkgs-lib-quixoftic-ipaddr";
       meta.description = "nixpkgs-lib-quixoftic ipaddr tests";
@@ -98,6 +106,7 @@ in
   inherit (jobs) cleanSources;
   inherit (jobs) cleanPackages;
   inherit (jobs) haskell;
+  inherit (jobs) attrsets;
   inherit (jobs) ipaddr;
   inherit (jobs) misc;
   inherit (jobs) security;
@@ -105,6 +114,7 @@ in
 }
 // pkgs.lib.testing.enumerateConstituents jobs.cleanSources
 // pkgs.lib.testing.enumerateConstituents jobs.cleanPackages
+// pkgs.lib.testing.enumerateConstituents jobs.attrsets
 // pkgs.lib.testing.enumerateConstituents jobs.ipaddr
 // pkgs.lib.testing.enumerateConstituents jobs.misc
 // pkgs.lib.testing.enumerateConstituents jobs.security
