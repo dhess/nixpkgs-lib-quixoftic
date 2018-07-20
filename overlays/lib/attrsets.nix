@@ -72,4 +72,17 @@ in rec
 
   noAttrs = pred: attrs: !(anyAttrs pred attrs);
 
+
+  ## Mapping over attrsets.
+
+  /* Apply a function to the value of each key/value pair in an
+     attribute set (discarding the key), returning a list of the
+     transformed values.
+
+     Note that `mapValuesToList f s` is equivalent to
+     `mapAttrsToList (_: v: f v) s`.
+  */
+
+  mapValuesToList = f: attrs: lib.mapAttrsToList (_: v: f v) attrs;
+
 }

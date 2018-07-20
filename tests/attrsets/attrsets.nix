@@ -90,4 +90,13 @@ runTests rec {
     expected = false;
   };
 
+  test-mapValuesToList = rec {
+    example = {
+      foo = { name = "bob"; };
+      bar = { name = "steve"; };
+    };
+    expr = sort lessThan (mapValuesToList (x: x.name) example);
+    expected = [ "bob" "steve" ];
+  };
+
 }
