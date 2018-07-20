@@ -6,7 +6,7 @@
 
 let
 
-  inherit (lib) all ipaddr stringToCharacters types resolvesToStorePath;
+  inherit (lib) all ipaddr mkOption stringToCharacters types resolvesToStorePath;
 
   addCheckDesc = desc: elemType: check: types.addCheck elemType check
     // { description = "${elemType.description} (with check: ${desc})"; };
@@ -37,6 +37,51 @@ in rec
   ipv6 = addCheckDesc "valid IPv6 address" types.str ipaddr.isIPv6;
   ipv6CIDR = addCheckDesc "valid IPv6 address with CIDR suffix" types.str ipaddr.isIPv6CIDR;
   ipv6NoCIDR = addCheckDesc "valid IPv6 address, no CIDR suffix" types.str ipaddr.isIPv6NoCIDR;
+
+  # The `addrOpts` types should be compatible with many NixOS modules'
+  # expectations of an IP address plus subnet prefix.
+
+  addrOptsV4 = types.submodule {
+    options = {
+      address = mkOption {
+        type = ipv4NoCIDR;
+        example = "10.8.8.8";
+        description = ''
+          An IPv4 address (with no CIDR suffix).
+        '';
+      };
+      prefixLength = mkOption {
+        type = types.ints.between 1 32;
+        example = 32;
+        default = 24;
+        description = ''
+          The IPv4 address's subnet prefix length. The default is
+          <literal>24</literal>.
+        '';
+      };
+    };
+  };
+
+  addrOptsV6 = types.submodule {
+    options = {
+      address = mkOption {
+        type = ipv6NoCIDR;
+        example = "2001:db8::1";
+        description = ''
+          An IPv6 address (with no CIDR suffix).
+        '';
+      };
+      prefixLength = mkOption {
+        type = types.ints.between 1 128;
+        default = 64;
+        example = 128;
+        description = ''
+          The IPv6 address's prefix length. The default is
+          <literal>64</literal>.
+        '';
+      };
+    };
+  };
 
 
   ## Integer types.

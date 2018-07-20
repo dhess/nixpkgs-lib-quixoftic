@@ -200,6 +200,24 @@ checkConfigError "The option .* in .* is not of type \`string (with check: valid
 checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value ./declare-ipv6NoCidr.nix ./define-value-invalid-ipv6-7.nix
 
 
+## addrOptsV4
+
+checkConfigOutput "1.2.3.4" config.value.address ./declare-addrOptsV4.nix ./define-value-addrOptsV4-1-2-3-4-slash-16.nix
+checkConfigOutput "16" config.value.prefixLength ./declare-addrOptsV4.nix ./define-value-addrOptsV4-1-2-3-4-slash-16.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv4 address, no CIDR suffix)'." config.value.address ./declare-addrOptsV4.nix ./define-value-invalid-addrOptsV4-1-2-3-4-slash-16.nix
+checkConfigError "The option .* in .* is not of type \`integer between 1 and 32 (both inclusive)'." config.value.prefixLength ./declare-addrOptsV4.nix ./define-value-invalid-addrOptsV4-1-2-3-4-slash-33.nix
+checkConfigError "The option .* in .* is not of type \`integer between 1 and 32 (both inclusive)'." config.value.prefixLength ./declare-addrOptsV4.nix ./define-value-invalid-addrOptsV4-1-2-3-4-slash-0.nix
+
+
+## addrOptsV6
+
+checkConfigOutput "1:2:3:4:5:6::7" config.value.address ./declare-addrOptsV6.nix ./define-value-addrOptsV6-1-2-3-4-5-6--7-slash-56.nix
+checkConfigOutput "56" config.value.prefixLength ./declare-addrOptsV6.nix ./define-value-addrOptsV6-1-2-3-4-5-6--7-slash-56.nix
+checkConfigError "The option .* in .* is not of type \`string (with check: valid IPv6 address, no CIDR suffix)'." config.value.address ./declare-addrOptsV6.nix ./define-value-invalid-addrOptsV6-1-2-3-4-5-6--7-slash-56.nix
+checkConfigError "The option .* in .* is not of type \`integer between 1 and 128 (both inclusive)'." config.value.prefixLength ./declare-addrOptsV6.nix ./define-value-invalid-addrOptsV6-1-2-3-4-5-6--7-slash-0.nix
+checkConfigError "The option .* in .* is not of type \`integer between 1 and 128 (both inclusive)'." config.value.prefixLength ./declare-addrOptsV6.nix ./define-value-invalid-addrOptsV6-1-2-3-4-5-6--7-slash-129.nix
+
+
 ## Ports.
 
 checkConfigOutput "8000" config.value ./declare-port.nix ./define-value-port-8000.nix
