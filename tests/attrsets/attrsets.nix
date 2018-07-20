@@ -40,5 +40,54 @@ runTests rec {
     expected = false;
   };
 
+  test-anyAttrs-true = rec {
+    example = {
+      foo = { name = "bob"; };
+      bar = { name = "steve"; };
+    };
+    expr = anyAttrs (v: v.name == "bob") example;
+    expected = true;
+  };
+
+  test-anyAttrs-trivially-false = rec {
+    example = {
+    };
+    expr = anyAttrs (v: v.name == "bob") example;
+    expected = false;
+  };
+  
+  test-anyAttrs-false = rec {
+    example = {
+      foo = { name = "bob"; };
+      bar = { name = "steve"; };
+    };
+    expr = anyAttrs (v: v.name == "alice") example;
+    expected = false;
+  };
+
+  test-noAttrs-true = rec {
+    example = {
+      foo = { name = "bob"; };
+      bar = { name = "steve"; };
+    };
+    expr = noAttrs (v: v.name == "alice") example;
+    expected = true;
+  };
+
+  test-noAttrs-trivially-true = rec {
+    example = {
+    };
+    expr = noAttrs (v: v.name == "bob") example;
+    expected = true;
+  };
+  
+  test-noAttrs-false = rec {
+    example = {
+      foo = { name = "bob"; };
+      bar = { name = "steve"; };
+    };
+    expr = noAttrs (v: v.name == "steve") example;
+    expected = false;
+  };
 
 }
