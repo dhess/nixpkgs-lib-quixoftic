@@ -197,6 +197,11 @@ runTests rec {
     expected = false;
   };
 
+  test-ipv4AddrFromCIDR-1 = {
+    expr = ipv4AddrFromCIDR "10.0.10.1/24";
+    expected = "10.0.10.1";
+  };
+
   rfc1918Block1 = [
     "10.0.0.0"
     "10.8.8.8"
@@ -980,6 +985,59 @@ runTests rec {
     addrs = map (x: x + "%0/32") goodAddrs;
     expr = map unparseIPv6 (map parseIPv6 addrs);
     expected = addrs;
+  };
+
+  test-ipv6AddrFromCIDR-3 = {
+    expr = ipv6AddrFromCIDR "fe00::/64";
+    expected = "fe00::";
+  };
+
+  test-ipv6AddrFromCIDR-4 = {
+    expr = ipv6AddrFromCIDR "2001:db::3:1000:1/56";
+    expected = "2001:db::3:1000:1";
+  };
+
+
+  ## General convenience.
+
+  test-prefixLengthFromCIDR-1 = {
+    expr = prefixLengthFromCIDR "10.0.10.1/24";
+    expected = 24;
+  };
+
+  test-prefixLengthFromCIDR-2 = {
+    expr = prefixLengthFromCIDR "192.168.1.1/16";
+    expected = 16;
+  };
+
+  test-prefixLengthFromCIDR-3 = {
+    expr = prefixLengthFromCIDR "fe00::/64";
+    expected = 64;
+  };
+
+  test-prefixLengthFromCIDR-4 = {
+    expr = prefixLengthFromCIDR "2001:db::3:1000:1/56";
+    expected = 56;
+  };
+
+  test-netmaskFromIPv4CIDR-1 = {
+    expr = netmaskFromIPv4CIDR "10.0.10.1/24";
+    expected = "255.255.255.0";
+  };
+
+  test-netmaskFromIPv4CIDR-2 = {
+    expr = netmaskFromIPv4CIDR "192.168.1.1/16";
+    expected = "255.255.0.0";
+  };
+
+  test-netmaskFromIPv4CIDR-3 = {
+    expr = netmaskFromIPv4CIDR "192.168.0.1/30";
+    expected = "255.255.255.252";
+  };
+
+  test-netmaskFromIPv4CIDR-4 = {
+    expr = netmaskFromIPv4CIDR "10.3.0.3/7";
+    expected = "254.0.0.0";
   };
 
   test-prefixLengthToNetmask = rec {

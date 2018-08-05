@@ -102,7 +102,7 @@ let
           if suffix' == ""
           then addr
           else concatStringsSep "/" [ addr suffix' ];
-  
+
 
   ## These functions deal with IPv6 addresses expressed as a string.
 
@@ -216,6 +216,22 @@ let
     if prefixLength == 31 then "255.255.255.254" else
     "255.255.255.255";
 
+  ipv4AddrFromCIDR = s:
+    assert isIPv4CIDR s;
+    head (splitString "/" s);
+
+  ipv6AddrFromCIDR = s:
+    assert isIPv6CIDR s;
+    head (splitString "/" s);
+
+  prefixLengthFromCIDR = s:
+    assert (isIPv4CIDR s) || (isIPv6CIDR s);
+    toInt (head (tail (splitString "/" s)));
+
+  netmaskFromIPv4CIDR = s:
+    assert isIPv4CIDR s;
+    prefixLengthToNetmask (prefixLengthFromCIDR s);
+
 in
 {
   inherit parseIPv4;
@@ -224,11 +240,12 @@ in
   inherit parsedIPv4Addr parsedIPv4PrefixLength;
   inherit unparseIPv4;
 
-  inherit prefixLengthToNetmask;
-
   inherit parseIPv6;
   inherit isIPv6 isIPv6CIDR isIPv6NoCIDR;
 
   inherit parsedIPv6Addr parsedIPv6PrefixLength;
   inherit unparseIPv6;
+
+  inherit prefixLengthToNetmask;
+  inherit ipv4AddrFromCIDR ipv6AddrFromCIDR prefixLengthFromCIDR netmaskFromIPv4CIDR;
 }
