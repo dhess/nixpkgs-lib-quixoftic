@@ -23,10 +23,10 @@ let
     let
       good = builtins.match "^([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)\\.([[:digit:]]+)(/[[:digit:]]+)?$" s;
       parse = if good == null then [] else good;
-      octets = map toInt (ipv4Addr parse);
+      octets = map toInt (parsedIPv4Addr parse);
       suffix =
         let
-          suffix' = ipv4CIDRSuffix parse;
+          suffix' = parsedIPv4PrefixLength parse;
         in
           if (suffix' == [] || suffix' == [null])
           then []
@@ -44,13 +44,13 @@ let
     let
       l = parseIPv4 s;
     in
-      l != [] && (ipv4CIDRSuffix l) != [];
+      l != [] && (parsedIPv4PrefixLength l) != [];
 
   isIPv4NoCIDR = s:
     let
       l = parseIPv4 s;
     in
-      l != [] && (ipv4CIDRSuffix l) == [];
+      l != [] && (parsedIPv4PrefixLength l) == [];
 
   isIPv4RFC1918 = s:
     let
@@ -60,7 +60,7 @@ let
       then false
       else
         let
-          suffix = ipv4CIDRSuffix parse;
+          suffix = parsedIPv4PrefixLength parse;
           octet1 = elemAt parse 0;
           octet2 = elemAt parse 1;
           block1 = octet1 == 10 && (suffix == [] || head suffix >= 8);
@@ -74,8 +74,8 @@ let
   ## format, e.g., [ 10 0 10 1 24 ] for 10.0.10.1/24, or [ 10 0 10 1 ]
   ## for 10.0.10.1 (no CIDR suffix).
 
-  ipv4Addr = take 4;
-  ipv4CIDRSuffix = drop 4;
+  parsedIPv4Addr = take 4;
+  parsedIPv4PrefixLength = drop 4;
 
   # [ 10 0 10 1 ] -> "10.0.10.1"
   # [ 10 0 10 1 24 ] -> "10.0.10.1/24"
@@ -86,8 +86,8 @@ let
   # [ "10" "0" "10" "1" ] -> evaluation error
   unparseIPv4 = l:
     let
-      octets = ipv4Addr l;
-      suffix = ipv4CIDRSuffix l;
+      octets = parsedIPv4Addr l;
+      suffix = parsedIPv4PrefixLength l;
     in
       if (length l < 4)                     ||
          (length l > 5)                     ||
@@ -137,7 +137,7 @@ let
       # prefix (if given) is <= 128. This is a bit clumsy.
       good = builtins.match "^(${rfc3986})$" s;
       parse = if good == null then [] else take 1 good;
-      suffix = if parse == [] then [] else ipv6CIDRSuffix parse;
+      suffix = if parse == [] then [] else parsedIPv6PrefixLength parse;
     in
       if (suffix == [])
       then parse
@@ -150,26 +150,26 @@ let
     let
       l = parseIPv6 s;
     in
-      l != [] && (ipv6CIDRSuffix l) != [];
+      l != [] && (parsedIPv6PrefixLength l) != [];
 
   isIPv6NoCIDR = s:
     let
       l = parseIPv6 s;
     in
-      l != [] && (ipv6CIDRSuffix l) == [];
+      l != [] && (parsedIPv6PrefixLength l) == [];
 
 
   ## These functions deal with IPv6 addresses represented as a
   ## single-element string array (post-`parseIPv6`).
 
-  ipv6CIDRSuffix = l:
+  parsedIPv6PrefixLength = l:
     let
       addr = head l;
       suffix = tail (splitString "/" addr);
     in
       if suffix == [] then [] else map toInt suffix;
 
-  ipv6Addr = l:
+  parsedIPv6Addr = l:
     let
       addr = head l;
     in
@@ -221,7 +221,7 @@ in
   inherit parseIPv4;
   inherit isIPv4 isIPv4CIDR isIPv4NoCIDR isIPv4RFC1918;
 
-  inherit ipv4Addr ipv4CIDRSuffix;
+  inherit parsedIPv4Addr parsedIPv4PrefixLength;
   inherit unparseIPv4;
 
   inherit prefixLengthToNetmask;
@@ -229,6 +229,6 @@ in
   inherit parseIPv6;
   inherit isIPv6 isIPv6CIDR isIPv6NoCIDR;
 
-  inherit ipv6Addr ipv6CIDRSuffix;
+  inherit parsedIPv6Addr parsedIPv6PrefixLength;
   inherit unparseIPv6;
 }

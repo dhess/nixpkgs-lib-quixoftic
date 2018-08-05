@@ -339,23 +339,23 @@ runTests rec {
     expected = false;
   };
 
-  test-ipv4Addr-1 = {
-    expr = ipv4Addr (parseIPv4 "10.0.10.1");
+  test-parsedIPv4Addr-1 = {
+    expr = parsedIPv4Addr (parseIPv4 "10.0.10.1");
     expected = [ 10 0 10 1 ];
   };
 
-  test-ipv4Addr-2 = {
-    expr = ipv4Addr (parseIPv4 "10.0.10.1/24");
+  test-parsedIPv4Addr-2 = {
+    expr = parsedIPv4Addr (parseIPv4 "10.0.10.1/24");
     expected = [ 10 0 10 1 ];
   };
 
-  test-ipv4CIDRSuffix-1 = {
-    expr = ipv4CIDRSuffix (parseIPv4 "10.0.10.1");
+  test-parsedIPv4PrefixLength-1 = {
+    expr = parsedIPv4PrefixLength (parseIPv4 "10.0.10.1");
     expected = [ ];
   };
 
   test-c4CIDRSuffix-2 = {
-    expr = ipv4CIDRSuffix (parseIPv4 "10.0.10.1/24");
+    expr = parsedIPv4PrefixLength (parseIPv4 "10.0.10.1/24");
     expected = [ 24 ];
   };
 
@@ -851,76 +851,76 @@ runTests rec {
     expected = false;
   };
 
-  # Note -- it is an evaluation error to call ipv6Addr or ipv6CIDRSuffix
+  # Note -- it is an evaluation error to call parsedIPv6Addr or parsedIPv6PrefixLength
   # on an invalid IPv6 address.
   
-  test-ipv6CIDRSuffix-1 = {
-    expr = ipv6CIDRSuffix (parseIPv6 "2001::1/128");
+  test-parsedIPv6PrefixLength-1 = {
+    expr = parsedIPv6PrefixLength (parseIPv6 "2001::1/128");
     expected = [128];
   };
 
-  test-ipv6CIDRSuffix-2 = {
-    expr = ipv6CIDRSuffix (parseIPv6 "::ffff:1/32");
+  test-parsedIPv6PrefixLength-2 = {
+    expr = parsedIPv6PrefixLength (parseIPv6 "::ffff:1/32");
     expected = [32];
   };
 
-  test-ipv6CIDRSuffix-3 = {
-    expr = ipv6CIDRSuffix (parseIPv6 "1234::1/64");
+  test-parsedIPv6PrefixLength-3 = {
+    expr = parsedIPv6PrefixLength (parseIPv6 "1234::1/64");
     expected = [64];
   };
 
-  test-ipv6CIDRSuffix-4 = {
-    expr = ipv6CIDRSuffix (parseIPv6 "1234::1%eth0/64");
+  test-parsedIPv6PrefixLength-4 = {
+    expr = parsedIPv6PrefixLength (parseIPv6 "1234::1%eth0/64");
     expected = [64];
   };
 
-  test-ipv6CIDRSuffix-5 = {
-    expr = ipv6CIDRSuffix (parseIPv6 "1234::1");
+  test-parsedIPv6PrefixLength-5 = {
+    expr = parsedIPv6PrefixLength (parseIPv6 "1234::1");
     expected = [];
   };
 
-  test-ipv6CIDRSuffix-6 = {
-    expr = ipv6CIDRSuffix (parseIPv6 "::1");
+  test-parsedIPv6PrefixLength-6 = {
+    expr = parsedIPv6PrefixLength (parseIPv6 "::1");
     expected = [];
   };
 
-  test-ipv6CIDRSuffix-7 = {
-    expr = ipv6CIDRSuffix (parseIPv6 "::");
+  test-parsedIPv6PrefixLength-7 = {
+    expr = parsedIPv6PrefixLength (parseIPv6 "::");
     expected = [];
   };
 
-  test-ipv6Addr-1 = {
-    expr = ipv6Addr (parseIPv6 "2001::1/128");
+  test-parsedIPv6Addr-1 = {
+    expr = parsedIPv6Addr (parseIPv6 "2001::1/128");
     expected = "2001::1";
   };
 
-  test-ipv6Addr-2 = {
-    expr = ipv6Addr (parseIPv6 "::ffff:1/32");
+  test-parsedIPv6Addr-2 = {
+    expr = parsedIPv6Addr (parseIPv6 "::ffff:1/32");
     expected = "::ffff:1";
   };
 
-  test-ipv6Addr-3 = {
-    expr = ipv6Addr (parseIPv6 "1234::1/64");
+  test-parsedIPv6Addr-3 = {
+    expr = parsedIPv6Addr (parseIPv6 "1234::1/64");
     expected = "1234::1";
   };
 
-  test-ipv6Addr-4 = {
-    expr = ipv6Addr (parseIPv6 "1234::1%eth0/64");
+  test-parsedIPv6Addr-4 = {
+    expr = parsedIPv6Addr (parseIPv6 "1234::1%eth0/64");
     expected = "1234::1%eth0";
   };
 
-  test-ipv6Addr-5 = {
-    expr = ipv6Addr (parseIPv6 "1234::1");
+  test-parsedIPv6Addr-5 = {
+    expr = parsedIPv6Addr (parseIPv6 "1234::1");
     expected = "1234::1";
   };
 
-  test-ipv6Addr-6 = {
-    expr = ipv6Addr (parseIPv6 "::1");
+  test-parsedIPv6Addr-6 = {
+    expr = parsedIPv6Addr (parseIPv6 "::1");
     expected = "::1";
   };
 
-  test-ipv6Addr-7 = {
-    expr = ipv6Addr (parseIPv6 "::");
+  test-parsedIPv6Addr-7 = {
+    expr = parsedIPv6Addr (parseIPv6 "::");
     expected = "::";
   };
 
