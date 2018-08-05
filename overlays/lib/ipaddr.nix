@@ -178,6 +178,44 @@ let
   unparseIPv6 = l: if l == [] then "" else head l;
 
 
+  ## Convenience functions.
+
+  prefixLengthToNetmask = prefixLength:
+    assert (prefixLength >= 0 && prefixLength < 33);
+    if prefixLength == 0  then "0.0.0.0"         else
+    if prefixLength == 1  then "128.0.0.0"       else
+    if prefixLength == 2  then "192.0.0.0"       else
+    if prefixLength == 3  then "224.0.0.0"       else
+    if prefixLength == 4  then "240.0.0.0"       else
+    if prefixLength == 5  then "248.0.0.0"       else
+    if prefixLength == 6  then "252.0.0.0"       else
+    if prefixLength == 7  then "254.0.0.0"       else
+    if prefixLength == 8  then "255.0.0.0"       else
+    if prefixLength == 9  then "255.128.0.0"     else
+    if prefixLength == 10 then "255.192.0.0"     else
+    if prefixLength == 11 then "255.224.0.0"     else
+    if prefixLength == 12 then "255.240.0.0"     else
+    if prefixLength == 13 then "255.248.0.0"     else
+    if prefixLength == 14 then "255.252.0.0"     else
+    if prefixLength == 15 then "255.254.0.0"     else
+    if prefixLength == 16 then "255.255.0.0"     else
+    if prefixLength == 17 then "255.255.128.0"   else
+    if prefixLength == 18 then "255.255.192.0"   else
+    if prefixLength == 19 then "255.255.224.0"   else
+    if prefixLength == 20 then "255.255.240.0"   else
+    if prefixLength == 21 then "255.255.248.0"   else
+    if prefixLength == 22 then "255.255.252.0"   else
+    if prefixLength == 23 then "255.255.254.0"   else
+    if prefixLength == 24 then "255.255.255.0"   else
+    if prefixLength == 25 then "255.255.255.128" else
+    if prefixLength == 26 then "255.255.255.192" else
+    if prefixLength == 27 then "255.255.255.224" else
+    if prefixLength == 28 then "255.255.255.240" else
+    if prefixLength == 29 then "255.255.255.248" else
+    if prefixLength == 30 then "255.255.255.252" else
+    if prefixLength == 31 then "255.255.255.254" else
+    "255.255.255.255";
+
 in
 {
   inherit parseIPv4;
@@ -185,6 +223,8 @@ in
 
   inherit ipv4Addr ipv4CIDRSuffix;
   inherit unparseIPv4;
+
+  inherit prefixLengthToNetmask;
 
   inherit parseIPv6;
   inherit isIPv6 isIPv6CIDR isIPv6NoCIDR;
