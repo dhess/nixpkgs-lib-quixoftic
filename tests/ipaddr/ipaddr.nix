@@ -344,6 +344,232 @@ runTests rec {
     expected = false;
   };
 
+  ### RFC 1918 with no CIDR prefix.
+
+  test-not-ipv4RFC1918NoCIDR = {
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR notRFC1918));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block1 = {
+    expr = allTrue (flatten (map isIPv4RFC1918NoCIDR rfc1918Block1));
+    expected = true;
+  };
+
+  test-ipv4RFC1918NoCIDR-block1-with-CIDR-1 = rec {
+    addrs = map (x: x + "/8") rfc1918Block1;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block1-with-CIDR-2 = rec {
+    addrs = map (x: x + "/16") rfc1918Block1;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block1-with-CIDR-3 = rec {
+    addrs = map (x: x + "/32") rfc1918Block1;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918NoCIDR-block1-with-CIDR-1 = rec {
+    addrs = map (x: x + "/7") rfc1918Block1;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918NoCIDR-block1-with-CIDR-2 = rec {
+    addrs = map (x: x + "/0") rfc1918Block1;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block2 = {
+    expr = allTrue (flatten (map isIPv4RFC1918NoCIDR rfc1918Block2));
+    expected = true;
+  };
+
+  test-ipv4RFC1918NoCIDR-block2-with-CIDR-1 = rec {
+    addrs = map (x: x + "/12") rfc1918Block2;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block2-with-CIDR-2 = rec {
+    addrs = map (x: x + "/24") rfc1918Block2;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block2-with-CIDR-3 = rec {
+    addrs = map (x: x + "/32") rfc1918Block2;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918NoCIDR-block2-with-CIDR-1 = rec {
+    addrs = map (x: x + "/11") rfc1918Block2;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918NoCIDR-block2-with-CIDR-2 = rec {
+    addrs = map (x: x + "/0") rfc1918Block2;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block3 = {
+    expr = allTrue (flatten (map isIPv4RFC1918NoCIDR rfc1918Block3));
+    expected = true;
+  };
+
+  test-ipv4RFC1918NoCIDR-block3-with-CIDR-1 = rec {
+    addrs = map (x: x + "/16") rfc1918Block3;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block3-with-CIDR-2 = rec {
+    addrs = map (x: x + "/24") rfc1918Block3;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918NoCIDR-block3-with-CIDR-3 = rec {
+    addrs = map (x: x + "/32") rfc1918Block3;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918NoCIDR-block3-with-CIDR-1 = rec {
+    addrs = map (x: x + "/15") rfc1918Block3;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918NoCIDR-block3-with-CIDR-2 = rec {
+    addrs = map (x: x + "/0") rfc1918Block3;
+    expr = anyTrue (flatten (map isIPv4RFC1918NoCIDR addrs));
+    expected = false;
+  };
+
+  ### RFC 1918 with CIDR prefix.
+
+  test-not-ipv4RFC1918CIDR = {
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR notRFC1918));
+    expected = false;
+  };
+
+  test-ipv4RFC1918CIDR-block1 = {
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR rfc1918Block1));
+    expected = false;
+  };
+
+  test-ipv4RFC1918CIDR-block1-with-CIDR-1 = rec {
+    addrs = map (x: x + "/8") rfc1918Block1;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-ipv4RFC1918CIDR-block1-with-CIDR-2 = rec {
+    addrs = map (x: x + "/16") rfc1918Block1;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-ipv4RFC1918CIDR-block1-with-CIDR-3 = rec {
+    addrs = map (x: x + "/32") rfc1918Block1;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-not-ipv4RFC1918CIDR-block1-with-CIDR-1 = rec {
+    addrs = map (x: x + "/7") rfc1918Block1;
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918CIDR-block1-with-CIDR-2 = rec {
+    addrs = map (x: x + "/0") rfc1918Block1;
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918CIDR-block2 = {
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR rfc1918Block2));
+    expected = false;
+  };
+
+  test-ipv4RFC1918CIDR-block2-with-CIDR-1 = rec {
+    addrs = map (x: x + "/12") rfc1918Block2;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-ipv4RFC1918CIDR-block2-with-CIDR-2 = rec {
+    addrs = map (x: x + "/24") rfc1918Block2;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-ipv4RFC1918CIDR-block2-with-CIDR-3 = rec {
+    addrs = map (x: x + "/32") rfc1918Block2;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-not-ipv4RFC1918CIDR-block2-with-CIDR-1 = rec {
+    addrs = map (x: x + "/11") rfc1918Block2;
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918CIDR-block2-with-CIDR-2 = rec {
+    addrs = map (x: x + "/0") rfc1918Block2;
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = false;
+  };
+
+  test-ipv4RFC1918CIDR-block3 = {
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR rfc1918Block3));
+    expected = false;
+  };
+
+  test-ipv4RFC1918CIDR-block3-with-CIDR-1 = rec {
+    addrs = map (x: x + "/16") rfc1918Block3;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-ipv4RFC1918CIDR-block3-with-CIDR-2 = rec {
+    addrs = map (x: x + "/24") rfc1918Block3;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-ipv4RFC1918CIDR-block3-with-CIDR-3 = rec {
+    addrs = map (x: x + "/32") rfc1918Block3;
+    expr = allTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = true;
+  };
+
+  test-not-ipv4RFC1918CIDR-block3-with-CIDR-1 = rec {
+    addrs = map (x: x + "/15") rfc1918Block3;
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = false;
+  };
+
+  test-not-ipv4RFC1918CIDR-block3-with-CIDR-2 = rec {
+    addrs = map (x: x + "/0") rfc1918Block3;
+    expr = anyTrue (flatten (map isIPv4RFC1918CIDR addrs));
+    expected = false;
+  };
+
+  # IPv4 parsing.
+
   test-parsedIPv4Addr-1 = {
     expr = parsedIPv4Addr (parseIPv4 "10.0.10.1");
     expected = [ 10 0 10 1 ];

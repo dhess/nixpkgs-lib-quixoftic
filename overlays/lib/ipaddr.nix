@@ -38,6 +38,23 @@ let
       then octets ++ suffix
       else [];
 
+  parseIPv4RFC1918 = s:
+    let
+      parse = parseIPv4 s;
+    in
+      if parse == []
+      then []
+      else
+        let
+          suffix = parsedIPv4PrefixLength parse;
+          octet1 = elemAt parse 0;
+          octet2 = elemAt parse 1;
+          block1 = octet1 == 10 && (suffix == [] || head suffix >= 8);
+          block2 = octet1 == 172 && (octet2 >= 16 && octet2 < 32) && (suffix == [] || head suffix >= 12);
+          block3 = octet1 == 192 && octet2 == 168 && (suffix == [] || head suffix >= 16);
+        in
+          if block1 || block2 || block3 then parse else [];
+
   isIPv4 = s: (parseIPv4 s) != [];
 
   isIPv4CIDR = s:
@@ -52,22 +69,20 @@ let
     in
       l != [] && (parsedIPv4PrefixLength l) == [];
 
-  isIPv4RFC1918 = s:
+  isIPv4RFC1918 = s: (parseIPv4RFC1918 s) != [];
+
+  isIPv4RFC1918CIDR = s:
     let
-      parse = parseIPv4 s;
+      l = parseIPv4RFC1918 s;
     in
-      if parse == []
-      then false
-      else
-        let
-          suffix = parsedIPv4PrefixLength parse;
-          octet1 = elemAt parse 0;
-          octet2 = elemAt parse 1;
-          block1 = octet1 == 10 && (suffix == [] || head suffix >= 8);
-          block2 = octet1 == 172 && (octet2 >= 16 && octet2 < 32) && (suffix == [] || head suffix >= 12);
-          block3 = octet1 == 192 && octet2 == 168 && (suffix == [] || head suffix >= 16);
-        in
-          block1 || block2 || block3;
+      l != [] && (parsedIPv4PrefixLength l) != [];
+
+  isIPv4RFC1918NoCIDR = s:
+    let
+      l = parseIPv4RFC1918 s;
+    in
+      l != [] && (parsedIPv4PrefixLength l) == [];
+
 
 
   ## These functions deal with IPv4 addresses expressed in list
@@ -234,8 +249,8 @@ let
 
 in
 {
-  inherit parseIPv4;
-  inherit isIPv4 isIPv4CIDR isIPv4NoCIDR isIPv4RFC1918;
+  inherit parseIPv4 parseIPv4RFC1918;
+  inherit isIPv4 isIPv4CIDR isIPv4NoCIDR isIPv4RFC1918 isIPv4RFC1918CIDR isIPv4RFC1918NoCIDR;
 
   inherit parsedIPv4Addr parsedIPv4PrefixLength;
   inherit unparseIPv4;
