@@ -45,6 +45,11 @@ let
   localDNS = callLibs ./lib/dns.nix;
 
 
+  ## Dhall helpers.
+
+  localDhall = callLibs ./lib/dhall.nix;
+
+
   ## Functions for cleaning local source directories. These are useful
   ## for filtering out files in your local repo that should not
   ## contribute to a Nix hash, so that you can just `src = ./.` in
@@ -226,6 +231,8 @@ in
     inherit exclusiveOr;
 
     attrsets = (super.lib.attrsets or {}) // localAttrSets;
+
+    dhall = (super.lib.dhall or {}) // localDhall;
 
     dns = (super.lib.dns or {}) // localDNS;
 
