@@ -60,8 +60,20 @@ let
   ffdhe3072Pem = pkgs.writeText "ffdhe3072.pem" ffdhe3072;
   ffdhe4096Pem = pkgs.writeText "ffdhe4096.pem" ffdhe4096;
 
+
+  # Mozilla recommended strongest modern OpenSSL ciphers list.
+  #
+  # This is useful for many programs that use OpenSSL, when you want
+  # to harden the ciphers that the program will accept.
+  #
+  # From:
+  # https://mozilla.github.io/server-side-tls/ssl-config-generator/?server=nginx-1.10.3&openssl=1.0.1e&hsts=yes&profile=modern
+
+  sslModernCiphers = "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256";
+
 in
 {
   inherit ffdhe2048 ffdhe3072 ffdhe4096;
   inherit ffdhe2048Pem ffdhe3072Pem ffdhe4096Pem;
+  inherit sslModernCiphers;
 }
