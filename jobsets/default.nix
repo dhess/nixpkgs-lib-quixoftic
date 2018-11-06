@@ -7,7 +7,7 @@
 
 let
 
-  nixpkgsLibQuixofticUri = "https://github.com/quixoftic/nixpkgs-lib-quixoftic.git";
+  nixpkgsLibQuixofticUri = "https://github.com/dhess/nixpkgs-lib-quixoftic.git";
 
   mkFetchGithub = value: {
     inherit value;
