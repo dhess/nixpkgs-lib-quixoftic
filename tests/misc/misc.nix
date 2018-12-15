@@ -43,4 +43,34 @@ runTests {
     expected = [ "8.8.8.8" "8.8.4.4" "2001:4860:4860::8888" "2001:4860:4860::8844" ];
   };
 
+  test-cloudflareV4DNS = {
+    expr = dns.cloudflareV4DNS;
+    expected = [ "1.1.1.1" "1.0.0.1" ];
+  };
+
+  test-cloudflareV6DNS = {
+    expr = dns.cloudflareV6DNS;
+    expected = [ "2606:4700:4700::1111" "2606:4700:4700::1001" ];
+  };
+
+  test-cloudflareDNS = {
+    expr = dns.cloudflareDNS;
+    expected = [ "1.1.1.1" "1.0.0.1" "2606:4700:4700::1111" "2606:4700:4700::1001" ];
+  };
+
+  test-cloudflareV4DNSOverTLS = {
+    expr = dns.cloudflareV4DNSOverTLS;
+    expected = [ "1.1.1.1@853#cloudflare-dns.com" "1.0.0.1@853#cloudflare-dns.com" ];
+  };
+
+  test-cloudflareV6DNSOverTLS = {
+    expr = dns.cloudflareV6DNSOverTLS;
+    expected = [ "2606:4700:4700::1111@853#cloudflare-dns.com" "2606:4700:4700::1001@853#cloudflare-dns.com" ];
+  };
+
+  test-cloudflareDNSOverTLS = {
+    expr = dns.cloudflareDNSOverTLS;
+    expected = [ "1.1.1.1@853#cloudflare-dns.com" "1.0.0.1@853#cloudflare-dns.com" "2606:4700:4700::1111@853#cloudflare-dns.com" "2606:4700:4700::1001@853#cloudflare-dns.com" ];
+  };
+
 }
