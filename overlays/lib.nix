@@ -206,6 +206,11 @@ in
 {
   lib = (super.lib or {}) // {
 
+    # Maintainers.
+    maintainers = (super.lib.maintainers or {}) // {
+      dhess-pers = "Drew Hess <src@drewhess.com>";
+    };
+
     # Secrets.
     inherit secretPath secretReadFile secretFileContents;
 
