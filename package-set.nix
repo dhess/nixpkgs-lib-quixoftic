@@ -16,6 +16,8 @@ let
 in
 self //
 {
+  modules = self.lib.pathDirectory ./modules;
+
   overlays = {
     lib = self.lib.importDirectory ./overlays/lib;
     haskell = self.lib.importDirectory ./overlays/haskell;
