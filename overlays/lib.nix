@@ -206,6 +206,10 @@ let
 
   exclusiveOr = x: y: (x && !y) || (!x && y);
 
+
+  ## Dealing with directories full of Nix expressions.
+  directoryUtils = import ./lib/directory.nix;
+
 in
 {
   lib = (super.lib or {}) // {
@@ -238,6 +242,8 @@ in
     inherit resolvesToStorePath;
 
     inherit exclusiveOr;
+
+    inherit (directoryUtils) listDirectory pathDirectory importDirectory mkCallDirectory;
 
     attrsets = (super.lib.attrsets or {}) // localAttrSets;
 
