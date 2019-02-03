@@ -50,6 +50,10 @@ let
   localDhall = callLibs ./lib/dhall.nix;
 
 
+  # Emacs helpers.
+  localEmacs = callLibs ./lib/emacs.nix;
+
+
   ## Functions for cleaning local source directories. These are useful
   ## for filtering out files in your local repo that should not
   ## contribute to a Nix hash, so that you can just `src = ./.` in
@@ -240,6 +244,8 @@ in
     dhall = (super.lib.dhall or {}) // localDhall;
 
     dns = (super.lib.dns or {}) // localDNS;
+
+    emacs = (super.lib.emacs or {}) // localEmacs;
 
     ipaddr = (super.lib.ipaddr or {}) // localIPAddr;
 
