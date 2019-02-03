@@ -18,6 +18,6 @@ let
 
 in lib // (rec {
 
-  inherit fetchNixPkgs;
+  inherit fetchNixPkgs nixpkgs;
 
 })
