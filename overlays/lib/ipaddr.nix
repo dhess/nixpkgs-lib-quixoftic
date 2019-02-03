@@ -1,10 +1,8 @@
 ## Useful functions for dealing with IP addresses that are represented as strings.
 
-{ lib
-, ...
-}:
+self: super:
 
-with lib;
+with super.lib;
 
 let
 
@@ -249,18 +247,22 @@ let
 
 in
 {
-  inherit parseIPv4 parseIPv4RFC1918;
-  inherit isIPv4 isIPv4CIDR isIPv4NoCIDR isIPv4RFC1918 isIPv4RFC1918CIDR isIPv4RFC1918NoCIDR;
+  lib = (super.lib or {}) // {
+    ipaddr = (super.lib.ipaddr or {}) // {
+      inherit parseIPv4 parseIPv4RFC1918;
+      inherit isIPv4 isIPv4CIDR isIPv4NoCIDR isIPv4RFC1918 isIPv4RFC1918CIDR isIPv4RFC1918NoCIDR;
 
-  inherit parsedIPv4Addr parsedIPv4PrefixLength;
-  inherit unparseIPv4;
+      inherit parsedIPv4Addr parsedIPv4PrefixLength;
+      inherit unparseIPv4;
 
-  inherit parseIPv6;
-  inherit isIPv6 isIPv6CIDR isIPv6NoCIDR;
+      inherit parseIPv6;
+      inherit isIPv6 isIPv6CIDR isIPv6NoCIDR;
 
-  inherit parsedIPv6Addr parsedIPv6PrefixLength;
-  inherit unparseIPv6;
+      inherit parsedIPv6Addr parsedIPv6PrefixLength;
+      inherit unparseIPv6;
 
-  inherit prefixLengthToNetmask;
-  inherit ipv4AddrFromCIDR ipv6AddrFromCIDR prefixLengthFromCIDR netmaskFromIPv4CIDR;
+      inherit prefixLengthToNetmask;
+      inherit ipv4AddrFromCIDR ipv6AddrFromCIDR prefixLengthFromCIDR netmaskFromIPv4CIDR;
+    };
+  };
 }

@@ -1,71 +1,17 @@
+## Functions for cleaning local source directories. These are useful
+## for filtering out files in your local repo that should not
+## contribute to a Nix hash, so that you can just `src = ./.` in
+## your derivation, and then filter that attribute after the fact.
+##
+## Note that these functions are composable, e.g., cleanSourceNix
+## (cleanCabalStack ...) is a valid expression. They will also
+## compose with any `lib.cleanSourceWith` function (but *not* with
+## `builtins.filterSource`; see the `lib.cleanSourceWith`
+## documentation).
+
 self: super:
 
 let
-
-  callLibs = file: import file { pkgs = self; lib = self.lib; };
-
-
-  ## Securely dealing with secrets; i.e., preventing them from
-  ## entering the Nix store.
-  #
-  # These are all predicated on the behavior of the `secretPath`
-  # function, which takes a path and either return the path, if it
-  # doesn't resolve to a store path; or "/illegal-secret-path", if it
-  # does.
-
-  secretPath = path:
-    let safePath = toString path; in
-      if resolvesToStorePath safePath then "/illegal-secret-path" else safePath;
-  secretReadFile = path: builtins.readFile (secretPath path);
-  secretFileContents = path: super.lib.fileContents (secretPath path);
-
-
-  ## Utilities on attrsets.
-
-  localAttrSets = callLibs ./lib/attrsets.nix;
-
-
-  ## New types for NixOS modules.
-
-  localTypes = callLibs ./lib/types.nix;
-
-
-  ## Security-related functions, groups, etc.
-
-  localSecurity = callLibs ./lib/security.nix;
-
-
-  ## Convenience functions for IP addresses.
-
-  localIPAddr = callLibs ./lib/ipaddr.nix;
-
-
-  ## DNS-related stuff.
-
-  localDNS = callLibs ./lib/dns.nix;
-
-
-  ## Dhall helpers.
-
-  localDhall = callLibs ./lib/dhall.nix;
-
-
-  # Emacs helpers.
-  localEmacs = callLibs ./lib/emacs.nix;
-
-
-  ## Functions for cleaning local source directories. These are useful
-  ## for filtering out files in your local repo that should not
-  ## contribute to a Nix hash, so that you can just `src = ./.` in
-  ## your derivation, and then filter that attribute after the fact.
-  ##
-  ## Note that these functions are composable, e.g., cleanSourceNix
-  ## (cleanCabalStack ...) is a valid expression. They will also
-  ## compose with any `lib.cleanSourceWith` function (but *not* with
-  ## `builtins.filterSource`; see the `lib.cleanSourceWith`
-  ## documentation).
-
-
   # In most cases, I believe that filtering Nix files from the source
   # hash is the right thing to do. They're obviously already evaluated
   # when a nix-build command is executed, so if *what they evaluate*
@@ -162,66 +108,9 @@ let
     src = cleanSrc oldAttrs.src;
   }));
 
-
-  ## True if the argument is a path (or a string, when treated as a
-  ## path) that resolves to a Nix store path; i.e., the path begins
-  ## with `/nix/store`. It is an error to call this on anything that
-  ## doesn't evaluate in a string context.
-
-  resolvesToStorePath = x:
-    let
-      stringContext = "${x}";
-    in builtins.substring 0 1 stringContext == "/"
-    && super.lib.hasPrefix builtins.storeDir stringContext;
-
-
-  ## Convenience functions for tests, esp. for Hydras.
-
-  # Aggregates are handy for defining jobs (especially for subsets of
-  # platforms), but they don't provide very useful information in
-  # Hydra, especially when they die. We use aggregates here to define
-  # set of jobs, and then splat them into the output attrset so that
-  # they're more visible in Hydra.
-
-  enumerateConstituents = aggregate: super.lib.listToAttrs (
-    map (d:
-           let
-             name = (builtins.parseDrvName d.name).name;
-             system = d.system;
-           in
-             { name = name + "." + system;
-               value = d;
-             }
-         )
-        aggregate.constituents
-  );
-
-
-  ## Provide access to the whole package, if needed.
-
-  nixpkgs-lib-quixoftic-path = ../.;
-
-
-  ## Exclusive or.
-
-  exclusiveOr = x: y: (x && !y) || (!x && y);
-
-
-  ## Dealing with directories full of Nix expressions.
-  directoryUtils = import ./lib/directory.nix;
-
 in
 {
   lib = (super.lib or {}) // {
-
-    # Maintainers.
-    maintainers = (super.lib.maintainers or {}) // {
-      dhess-pers = "Drew Hess <src@drewhess.com>";
-    };
-
-    # Secrets.
-    inherit secretPath secretReadFile secretFileContents;
-
     # Filters.
     inherit cleanSourceFilterNix;
     inherit cleanSourceFilterHaskell;
@@ -238,32 +127,5 @@ in
     inherit cleanSourceAllExtraneous;
 
     inherit cleanPackage;
-
-    inherit resolvesToStorePath;
-
-    inherit exclusiveOr;
-
-    inherit (directoryUtils) listDirectory pathDirectory importDirectory mkCallDirectory;
-
-    attrsets = (super.lib.attrsets or {}) // localAttrSets;
-
-    dhall = (super.lib.dhall or {}) // localDhall;
-
-    dns = (super.lib.dns or {}) // localDNS;
-
-    emacs = (super.lib.emacs or {}) // localEmacs;
-
-    ipaddr = (super.lib.ipaddr or {}) // localIPAddr;
-
-    security = (super.lib.security or {}) // localSecurity;
-
-    testing = (super.lib.testing or {}) // {
-      inherit enumerateConstituents;
-    };
-
-    inherit nixpkgs-lib-quixoftic-path;
-
-    types = (super.lib.types or {}) // localTypes;
-
   };
 }

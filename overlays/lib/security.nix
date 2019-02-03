@@ -1,8 +1,6 @@
-{ pkgs
-, lib
-}:
+self: super:
 
-with lib;
+with super.lib;
 
 let
 
@@ -56,9 +54,9 @@ let
     -----END DH PARAMETERS-----
   '';
 
-  ffdhe2048Pem = pkgs.writeText "ffdhe2048.pem" ffdhe2048;
-  ffdhe3072Pem = pkgs.writeText "ffdhe3072.pem" ffdhe3072;
-  ffdhe4096Pem = pkgs.writeText "ffdhe4096.pem" ffdhe4096;
+  ffdhe2048Pem = super.writeText "ffdhe2048.pem" ffdhe2048;
+  ffdhe3072Pem = super.writeText "ffdhe3072.pem" ffdhe3072;
+  ffdhe4096Pem = super.writeText "ffdhe4096.pem" ffdhe4096;
 
 
   # Mozilla recommended strongest modern OpenSSL ciphers list.
@@ -73,7 +71,11 @@ let
 
 in
 {
-  inherit ffdhe2048 ffdhe3072 ffdhe4096;
-  inherit ffdhe2048Pem ffdhe3072Pem ffdhe4096Pem;
-  inherit sslModernCiphers;
+  lib = (super.lib or {}) // {
+    security = (super.lib.security or {}) // {
+      inherit ffdhe2048 ffdhe3072 ffdhe4096;
+      inherit ffdhe2048Pem ffdhe3072Pem ffdhe4096Pem;
+      inherit sslModernCiphers;
+    };
+  };
 }

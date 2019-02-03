@@ -1,19 +1,14 @@
 ## Additional useful types, mostly for NixOS modules.
 
-{ lib
-, ...
-}:
+self: super:
 
 let
 
-  inherit (lib) all ipaddr mkOption stringToCharacters types resolvesToStorePath;
+  inherit (super.lib) all ipaddr mkOption stringToCharacters types resolvesToStorePath;
 
   addCheckDesc = desc: elemType: check: types.addCheck elemType check
     // { description = "${elemType.description} (with check: ${desc})"; };
 
-
-in rec
-{
   ## String types.
 
   nonEmptyStr = addCheckDesc "non-empty" types.str
@@ -90,4 +85,17 @@ in rec
 
   # Port 0 is sometimes used to indicate a "don't-care".
   port = types.ints.between 0 65535;
+
+in rec
+{
+  lib = (super.lib or {}) // {
+    types = (super.lib.types or {}) // {
+      inherit nonEmptyStr;
+      inherit storePath nonStorePath;
+      inherit ipv4 ipv4CIDR ipv4NoCIDR ipv4RFC1918 ipv4RFC1918CIDR ipv4RFC1918NoCIDR;
+      inherit ipv6 ipv6CIDR ipv6NoCIDR;
+      inherit addrOptsV4 addrOptsV6;
+      inherit port;
+    };
+  };
 }

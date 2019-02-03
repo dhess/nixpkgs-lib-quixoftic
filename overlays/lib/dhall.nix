@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+self: super:
 
 let
 
@@ -6,9 +6,13 @@ let
   let
     source = builtins.readFile fileName;
   in
-    pkgs.dhallToNix source;
+    super.dhallToNix source;
 
 in
 {
-  inherit toNixFromFile;
+  lib = (super.lib or {}) // {
+    dhall = (super.lib.dhall or {}) // {
+      inherit toNixFromFile;
+    };
+  };
 }

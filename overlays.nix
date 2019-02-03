@@ -1,4 +1,17 @@
 [
-  ./overlays/lib.nix
+  ./overlays/lib/attrsets.nix
+  ./overlays/lib/clean-source.nix
+  ./overlays/lib/dhall.nix
+  ./overlays/lib/directory.nix
+  ./overlays/lib/dns.nix
+  ./overlays/lib/emacs.nix
+  ./overlays/lib/ipaddr.nix
+  ./overlays/lib/maintainers.nix
+  ./overlays/lib/nixpkgs-lib-quixoftic.nix
+  ./overlays/lib/operators.nix
+  ./overlays/lib/secrets.nix
+  ./overlays/lib/security.nix
+  ./overlays/lib/testing.nix
+  ./overlays/lib/types.nix
   ./overlays/haskell-lib.nix
 ]

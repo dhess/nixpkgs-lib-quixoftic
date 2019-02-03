@@ -1,4 +1,7 @@
-{ pkgs, ... }:
+# Use `pkgs` rather than `super` here because it makes it easier to
+# keep all the overrides straight.
+
+self: pkgs:
 
 let
 
@@ -25,5 +28,9 @@ let
 in
 
 {
-  inherit melpaPackagesNgFor melpaPackagesNgFor';
+  lib = (pkgs.lib or {}) // {
+    emacs = (pkgs.lib.emacs or {}) // {
+      inherit melpaPackagesNgFor melpaPackagesNgFor';
+    };
+  };
 }

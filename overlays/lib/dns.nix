@@ -1,8 +1,4 @@
-## DNS-related stuff.
-
-{ lib
-, ...
-}:
+self: super:
 
 let
 
@@ -32,7 +28,11 @@ let
 
 in
 {
-  inherit googleV4DNS googleV6DNS googleDNS;
-  inherit cloudflareV4DNS cloudflareV6DNS cloudflareDNS;
-  inherit cloudflareV4DNSOverTLS cloudflareV6DNSOverTLS cloudflareDNSOverTLS;
+  lib = (super.lib or {}) // {
+    dns = (super.lib.dns or {}) // {
+      inherit googleV4DNS googleV6DNS googleDNS;
+      inherit cloudflareV4DNS cloudflareV6DNS cloudflareDNS;
+      inherit cloudflareV4DNSOverTLS cloudflareV6DNSOverTLS cloudflareDNSOverTLS;
+    };
+  };
 }
