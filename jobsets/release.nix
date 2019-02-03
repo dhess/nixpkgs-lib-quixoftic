@@ -38,9 +38,3 @@ with import (fixedNixPkgs + "/pkgs/top-level/release-lib.nix") {
   nlqFfdhe = all;
   nlqTypes = all;
 }))
-// {
-
-  # This doesn't generate any actual jobs, we just want to make sure
-  # it evaluates properly.
-  haskell = packagePlatforms pkgs.haskell;
-}
