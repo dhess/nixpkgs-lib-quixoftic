@@ -14,22 +14,24 @@ let
       f;
   });
 
+
+  ## Sometimes you don't want any haddocks to be generated for an
+  ## entire package set, rather than just a package here or there.
+  noHaddocks = hp: (properExtend hp (self: super: (
+    {
+      mkDerivation = args: super.mkDerivation (args // {
+        doHaddock = false;
+      });
+    }
+  )));
+
 in
 
 {
   haskell = (super.haskell or {}) // {
     lib = (super.haskell.lib or {}) // {
+      inherit noHaddocks;
       inherit properExtend;
-
-      ## Sometimes you don't want any haddocks to be generated for an
-      ## entire package set, rather than just a package here or there.
-      noHaddocks = hp: (properExtend hp (self: super: (
-        {
-          mkDerivation = args: super.mkDerivation (args // {
-            doHaddock = false;
-          });
-        }
-      )));
     };
   };
 }

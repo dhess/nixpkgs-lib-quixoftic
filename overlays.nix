@@ -13,5 +13,5 @@
   ./overlays/lib/security.nix
   ./overlays/lib/testing.nix
   ./overlays/lib/types.nix
-  ./overlays/haskell-lib.nix
+  ./overlays/haskell/lib.nix
 ]
