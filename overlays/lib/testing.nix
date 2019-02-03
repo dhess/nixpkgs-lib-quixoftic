@@ -12,16 +12,13 @@ let
   #
   # Note that each constituent may be either a list or an atom.
   enumerateConstituents = aggregate: super.lib.listToAttrs (
-    map (d:
+    map (value:
            let
-             x = if builtins.isList d then builtins.head d else d;
-             name = (builtins.parseDrvName x.name).name;
-             value = super.releaseTools.aggregate {
-               inherit name;
-               constituents = super.lib.singleton d;
-             };
+             drvName = (builtins.parseDrvName value.name).name;
+             system = value.system;
+             name = drvName + "_" + system;
            in { inherit name value; })
-        aggregate.constituents
+        (super.lib.flatten aggregate.constituents)
   );
 
 in
