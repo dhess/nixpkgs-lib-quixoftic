@@ -4,7 +4,7 @@ let
 
 in
 
-{ supportedSystems ? [ "x86_64-linux" ]
+{ supportedSystems ? [ "x86_64-linux" "x86_64-darwin" "aarch64-linux" ]
 , scrubJobs ? true
 , nixpkgsArgs ? {
     config = {allowUnfree = false; inHydra = true; };
@@ -21,6 +21,8 @@ with import (fixedNixPkgs + "/pkgs/top-level/release-lib.nix") {
 
 let
 
+  all = pkg: map (system: pkg.${system}) supportedSystems;
+
   jobs = {
 
     cleanSources = pkgs.releaseTools.aggregate {
@@ -28,11 +30,11 @@ let
       meta.description = "nixpkgs-lib-quixoftic cleanSource tests";
       constituents = with jobs; [
         nlqCleanSourceNix.x86_64-linux
-        nlqCleanSourceHaskell.x86_64-linux
-        nlqCleanSourceSystemCruft.x86_64-linux
-        nlqCleanSourceEditors.x86_64-linux
-        nlqCleanSourceMaintainer.x86_64-linux
-        nlqCleanSourceAllExtraneous.x86_64-linux
+        (all nlqCleanSourceHaskell)
+        (all nlqCleanSourceSystemCruft)
+        (all nlqCleanSourceEditors)
+        (all nlqCleanSourceMaintainer)
+        (all nlqCleanSourceAllExtraneous)
       ];
     };
 
@@ -44,12 +46,12 @@ let
       name = "nixpkgs-lib-quixoftic-cleanPackages";
       meta.description = "nixpkgs-lib-quixoftic cleanPackage tests";
       constituents = with jobs; [
-        nlqCleanPackageNix.x86_64-linux
-        nlqCleanPackageHaskell.x86_64-linux
-        nlqCleanPackageSystemCruft.x86_64-linux
-        nlqCleanPackageEditors.x86_64-linux
-        nlqCleanPackageMaintainer.x86_64-linux
-        nlqCleanPackageAllExtraneous.x86_64-linux
+        (all nlqCleanPackageNix)
+        (all nlqCleanPackageHaskell)
+        (all nlqCleanPackageSystemCruft)
+        (all nlqCleanPackageEditors)
+        (all nlqCleanPackageMaintainer)
+        (all nlqCleanPackageAllExtraneous)
       ];
     };
 
@@ -57,7 +59,7 @@ let
       name = "nixpkgs-lib-quixoftic-attrsets";
       meta.description = "nixpkgs-lib-quixoftic attrsets tests";
       constituents = with jobs; [
-        nlqAttrSets.x86_64-linux
+        (all nlqAttrSets)
       ];
     };
 
@@ -65,7 +67,7 @@ let
       name = "nixpkgs-lib-quixoftic-ipaddr";
       meta.description = "nixpkgs-lib-quixoftic ipaddr tests";
       constituents = with jobs; [
-        nlqIPAddr.x86_64-linux
+        (all nlqIPAddr)
       ];
     };
 
@@ -73,7 +75,7 @@ let
       name = "nixpkgs-lib-quixoftic-misc";
       meta.description = "nixpkgs-lib-quixoftic miscellaneous tests";
       constituents = with jobs; [
-        nlqMisc.x86_64-linux
+        (all nlqMisc)
       ];
     };
 
@@ -81,7 +83,7 @@ let
       name = "nixpkgs-lib-quixoftic-security";
       meta.description = "nixpkgs-lib-quixoftic security tests";
       constituents = with jobs; [
-        nlqFfdhe.x86_64-linux
+        (all nlqFfdhe)
       ];
     };
 
@@ -89,7 +91,7 @@ let
       name = "nixpkgs-lib-quixoftic-types";
       meta.description = "nixpkgs-lib-quixoftic types tests";
       constituents = with jobs; [
-        nlqTypes.x86_64-linux
+        (all nlqTypes)
       ];
     };
 

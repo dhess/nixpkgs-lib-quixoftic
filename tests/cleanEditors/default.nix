@@ -34,4 +34,6 @@ stdenv.mkDerivation rec {
     mkdir $out
     cp -rp . $out
   '';
+
+  meta.platforms = pkgs.lib.platforms.all;
 }

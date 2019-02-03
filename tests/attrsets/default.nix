@@ -36,4 +36,6 @@ stdenv.mkDerivation {
 
     touch $out
   '';
+
+  meta.platforms = pkgs.lib.platforms.all;
 }
